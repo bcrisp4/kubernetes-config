@@ -1,0 +1,5 @@
+apiVersion: v2
+version: 0.1.0
+appVersion: 1.2.0
+name: gateway-api-crds
+description: A Helm chart that deploys the Gateway API CRDs
