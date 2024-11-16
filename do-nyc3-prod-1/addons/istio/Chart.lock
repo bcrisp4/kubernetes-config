@@ -14,5 +14,8 @@ dependencies:
 - name: gateway
   repository: https://istio-release.storage.googleapis.com/charts
   version: 1.24.0
-digest: sha256:9cab84d90a5193ac5ef7059ef796f199d84039ee67c30d224ddedf501b4bf3f4
-generated: "2024-11-15T20:44:01.453898-07:00"
+- name: kiali-server
+  repository: https://kiali.org/helm-charts
+  version: 2.1.0
+digest: sha256:86d5a79d0ea8a233ec258928b341dd7131b32d0c8f4ca3d988cb5bd7e4651597
+generated: "2024-11-16T02:03:45.1111-05:00"
