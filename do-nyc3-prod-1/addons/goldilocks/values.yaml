@@ -1,0 +1,26 @@
+goldilocks:
+  controller:
+    enabled: true
+
+    revisionHistoryLimit: 0
+
+    resources:
+      requests:
+        cpu: 25m
+        memory: 200Mi
+      limits:
+        memory: 200Mi
+
+  dashboard:
+    enabled: true
+
+    revisionHistoryLimit: 0
+
+    replicaCount: 2
+
+    resources:
+      requests:
+        cpu: 25m
+        memory: 200Mi
+      limits:
+        memory: 200Mi
