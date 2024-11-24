@@ -23,9 +23,9 @@ cert-manager:
       memory: 128Mi
 
   topologySpreadConstraints:
-  - maxSkew: 2
+  - maxSkew: 1
     topologyKey: kubernetes.io/hostname
-    whenUnsatisfiable: ScheduleAnyway
+    whenUnsatisfiable: DoNotSchedule
     labelSelector:
       matchLabels:
         app.kubernetes.io/instance: cert-manager
@@ -65,9 +65,9 @@ cert-manager:
     timeoutSeconds: 20
 
     topologySpreadConstraints:
-    - maxSkew: 2
+    - maxSkew: 1
       topologyKey: kubernetes.io/hostname
-      whenUnsatisfiable: ScheduleAnyway
+      whenUnsatisfiable: DoNotSchedule
       labelSelector:
         matchLabels:
           app.kubernetes.io/instance: cert-manager
@@ -96,9 +96,9 @@ cert-manager:
         memory: 128Mi
 
     topologySpreadConstraints:
-    - maxSkew: 2
+    - maxSkew: 1
       topologyKey: kubernetes.io/hostname
-      whenUnsatisfiable: ScheduleAnyway
+      whenUnsatisfiable: DoNotSchedule
       labelSelector:
         matchLabels:
           app.kubernetes.io/instance: cert-manager
