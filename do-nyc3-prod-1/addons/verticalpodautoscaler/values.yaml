@@ -1,0 +1,61 @@
+verticalpodautoscaler:
+  recommender:
+    enabled: true
+
+    replicaCount: 2
+
+    revisionHistoryLimit: 0
+
+    podDisruptionBudget:
+      minAvailable: 1
+
+    resources:
+      requests:
+        cpu: 50m
+        memory: 200Mi
+      limits:
+        memory: 500Mi
+
+    podMonitor:
+      enabled: false
+      annotations: {}
+      labels: {}
+
+  updater:
+    enabled: true
+
+    replicaCount: 2
+
+    revisionHistoryLimit: 0
+
+    podDisruptionBudget:
+      minAvailable: 1
+
+    resources:
+      requests:
+        cpu: 50m
+        memory: 200Mi
+      limits:
+        memory: 500Mi
+
+    podMonitor:
+      enabled: false
+      annotations: {}
+      labels: {}
+
+  admissionController:
+    enabled: true
+
+    replicaCount: 2
+
+    revisionHistoryLimit: 0
+
+    podDisruptionBudget:
+      minAvailable: 1
+
+    resources:
+      requests:
+        cpu: 50m
+        memory: 200Mi
+      limits:
+        memory: 500Mi

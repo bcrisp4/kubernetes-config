@@ -1,0 +1,10 @@
+apiVersion: v2
+name: verticalpodautoscaler
+description: A Helm chart for Vertical Pod Autoscaler
+type: application
+version: 0.1.0
+
+dependencies:
+- name: vpa
+  version: ^4.7.1
+  repository: https://charts.fairwinds.com/stable
