@@ -1,4 +1,4 @@
-verticalpodautoscaler:
+vpa:
   recommender:
     enabled: true
 
