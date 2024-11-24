@@ -1,1 +1,20 @@
-sealed-secrets: {}
+sealed-secrets:
+
+  revisionHistoryLimit: 0
+
+  resources:
+    requests:
+      cpu: 50m
+      memory: 50Mi
+    limits:
+      memory: 100M
+
+  priorityClassName: ""
+
+  metrics:
+    serviceMonitor:
+      enabled: false
+      labels: {}
+      annotations: {}
+      interval: ""
+      scrapeTimeout: ""
