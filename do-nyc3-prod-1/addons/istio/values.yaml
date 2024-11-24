@@ -1,5 +1,0 @@
-istiod:
-  profile: ambient
-
-cni:
-  profile: ambient
