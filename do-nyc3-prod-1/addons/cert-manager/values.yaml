@@ -25,10 +25,10 @@ cert-manager:
   topologySpreadConstraints:
   - maxSkew: 1
     topologyKey: kubernetes.io/hostname
-    whenUnsatisfiable: DoNotSchedule
+    whenUnsatisfiable: ScheduleAnyway
     labelSelector:
       matchLabels:
-        app.kubernetes.io/instance: cert-manager
+        app.kubernetes.io/name: cert-manager
         app.kubernetes.io/component: controller
 
   prometheus:
@@ -67,10 +67,10 @@ cert-manager:
     topologySpreadConstraints:
     - maxSkew: 1
       topologyKey: kubernetes.io/hostname
-      whenUnsatisfiable: DoNotSchedule
+      whenUnsatisfiable: ScheduleAnyway
       labelSelector:
         matchLabels:
-          app.kubernetes.io/instance: cert-manager
+          app.kubernetes.io/name: cert-manager
           app.kubernetes.io/component: webhook
 
   cainjector:
@@ -98,10 +98,10 @@ cert-manager:
     topologySpreadConstraints:
     - maxSkew: 1
       topologyKey: kubernetes.io/hostname
-      whenUnsatisfiable: DoNotSchedule
+      whenUnsatisfiable: ScheduleAnyway
       labelSelector:
         matchLabels:
-          app.kubernetes.io/instance: cert-manager
+          app.kubernetes.io/name: cert-manager
           app.kubernetes.io/component: cainjector
 
   startupapicheck:
