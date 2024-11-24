@@ -87,25 +87,25 @@ cert-manager:
       limits:
         memory: 128Mi
 
-topologySpreadConstraints:
-- maxSkew: 1
-  topologyKey: kubernetes.io/hostname
-  whenUnsatisfiable: ScheduleAnyway
-  labelSelector:
-    matchLabels:
-      app.kubernetes.io/instance: cert-manager
-      app.kubernetes.io/component: controller
-- maxSkew: 1
-  topologyKey: kubernetes.io/hostname
-  whenUnsatisfiable: ScheduleAnyway
-  labelSelector:
-    matchLabels:
-      app.kubernetes.io/instance: cert-manager
-      app.kubernetes.io/component: cainjector
-- maxSkew: 1
-  topologyKey: kubernetes.io/hostname
-  whenUnsatisfiable: ScheduleAnyway
-  labelSelector:
-    matchLabels:
-      app.kubernetes.io/instance: cert-manager
-      app.kubernetes.io/component: webhook
+  topologySpreadConstraints:
+  - maxSkew: 1
+    topologyKey: kubernetes.io/hostname
+    whenUnsatisfiable: ScheduleAnyway
+    labelSelector:
+      matchLabels:
+        app.kubernetes.io/instance: cert-manager
+        app.kubernetes.io/component: controller
+  - maxSkew: 1
+    topologyKey: kubernetes.io/hostname
+    whenUnsatisfiable: ScheduleAnyway
+    labelSelector:
+      matchLabels:
+        app.kubernetes.io/instance: cert-manager
+        app.kubernetes.io/component: cainjector
+  - maxSkew: 1
+    topologyKey: kubernetes.io/hostname
+    whenUnsatisfiable: ScheduleAnyway
+    labelSelector:
+      matchLabels:
+        app.kubernetes.io/instance: cert-manager
+        app.kubernetes.io/component: webhook
