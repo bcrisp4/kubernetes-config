@@ -28,7 +28,6 @@ cert-manager:
     whenUnsatisfiable: ScheduleAnyway
     labelSelector:
       matchLabels:
-        app.kubernetes.io/name: cert-manager
         app.kubernetes.io/component: controller
 
   prometheus:
@@ -70,7 +69,6 @@ cert-manager:
       whenUnsatisfiable: ScheduleAnyway
       labelSelector:
         matchLabels:
-          app.kubernetes.io/name: cert-manager
           app.kubernetes.io/component: webhook
 
   cainjector:
@@ -101,7 +99,6 @@ cert-manager:
       whenUnsatisfiable: ScheduleAnyway
       labelSelector:
         matchLabels:
-          app.kubernetes.io/name: cert-manager
           app.kubernetes.io/component: cainjector
 
   startupapicheck:
