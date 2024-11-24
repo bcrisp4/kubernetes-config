@@ -22,6 +22,15 @@ cert-manager:
     limits:
       memory: 128Mi
 
+  topologySpreadConstraints:
+  - maxSkew: 1
+    topologyKey: kubernetes.io/hostname
+    whenUnsatisfiable: ScheduleAnyway
+    labelSelector:
+      matchLabels:
+        app.kubernetes.io/instance: cert-manager
+        app.kubernetes.io/component: controller
+
   prometheus:
     enabled: true
 
@@ -55,6 +64,15 @@ cert-manager:
 
     timeoutSeconds: 20
 
+    topologySpreadConstraints:
+    - maxSkew: 1
+      topologyKey: kubernetes.io/hostname
+      whenUnsatisfiable: ScheduleAnyway
+      labelSelector:
+        matchLabels:
+          app.kubernetes.io/instance: cert-manager
+          app.kubernetes.io/component: webhook
+
   cainjector:
     enabled: true
 
@@ -77,6 +95,15 @@ cert-manager:
       limits:
         memory: 128Mi
 
+    topologySpreadConstraints:
+    - maxSkew: 1
+      topologyKey: kubernetes.io/hostname
+      whenUnsatisfiable: ScheduleAnyway
+      labelSelector:
+        matchLabels:
+          app.kubernetes.io/instance: cert-manager
+          app.kubernetes.io/component: cainjector
+
   startupapicheck:
     enabled: true
 
@@ -86,26 +113,3 @@ cert-manager:
         memory: 64Mi
       limits:
         memory: 128Mi
-
-  topologySpreadConstraints:
-  - maxSkew: 1
-    topologyKey: kubernetes.io/hostname
-    whenUnsatisfiable: ScheduleAnyway
-    labelSelector:
-      matchLabels:
-        app.kubernetes.io/instance: cert-manager
-        app.kubernetes.io/component: controller
-  - maxSkew: 1
-    topologyKey: kubernetes.io/hostname
-    whenUnsatisfiable: ScheduleAnyway
-    labelSelector:
-      matchLabels:
-        app.kubernetes.io/instance: cert-manager
-        app.kubernetes.io/component: cainjector
-  - maxSkew: 1
-    topologyKey: kubernetes.io/hostname
-    whenUnsatisfiable: ScheduleAnyway
-    labelSelector:
-      matchLabels:
-        app.kubernetes.io/instance: cert-manager
-        app.kubernetes.io/component: webhook
