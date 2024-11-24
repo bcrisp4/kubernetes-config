@@ -53,6 +53,8 @@ cert-manager:
       limits:
         memory: 128Mi
 
+    timeoutSeconds: 20
+
   cainjector:
     enabled: true
 
