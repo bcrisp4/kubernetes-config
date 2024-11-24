@@ -6,10 +6,10 @@ goldilocks:
 
     resources:
       requests:
-        cpu: 25m
-        memory: 200Mi
+        cpu: 15m
+        memory: 105M
       limits:
-        memory: 200Mi
+        memory: 105M
 
   dashboard:
     enabled: true
@@ -20,7 +20,7 @@ goldilocks:
 
     resources:
       requests:
-        cpu: 25m
-        memory: 200Mi
+        cpu: 15m
+        memory: 105M
       limits:
-        memory: 200Mi
+        memory: 105M
