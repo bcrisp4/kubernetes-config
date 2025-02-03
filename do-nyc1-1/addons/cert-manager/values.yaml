@@ -1,0 +1,52 @@
+cert-manager:
+  crds:
+    enabled: true
+    keep: true
+
+  replicaCount: 1
+
+  resources:
+    requests:
+      cpu: 50m
+      memory: 64Mi
+    limits:
+      memory: 128Mi
+
+  prometheus:
+    enabled: true
+    servicemonitor:
+      enabled: false
+      prometheusInstance: default
+      interval: 60s
+      scrapeTimeout: 30s
+      labels: {}
+      annotations: {}
+
+  webhook:
+    replicaCount: 1
+    resources:
+      requests:
+        cpu: 50m
+        memory: 64Mi
+      limits:
+        memory: 128Mi
+    timeoutSeconds: 20
+
+  cainjector:
+    enabled: true
+    replicaCount: 1
+    resources:
+      requests:
+        cpu: 50m
+        memory: 64Mi
+      limits:
+        memory: 128Mi
+
+  startupapicheck:
+    enabled: true
+    resources:
+      requests:
+        cpu: 50m
+        memory: 64Mi
+      limits:
+        memory: 128Mi
