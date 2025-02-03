@@ -9,5 +9,7 @@ spec:
     kind: ImageCatalog
     name: timescaledb
     major: 16
+  postgresUID: 1000
+  postgresGID: 1000
   storage:
     size: 10Gi
