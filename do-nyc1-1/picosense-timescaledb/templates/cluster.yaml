@@ -15,7 +15,7 @@ spec:
     size: 10Gi
   bootstrap:
     initdb:
-      postInitTemplateSQL:
+      postInitSQL:
         - CREATE EXTENSION IF NOT EXISTS timescaledb;
   postgresql:
     shared_preload_libraries:
