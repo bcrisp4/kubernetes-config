@@ -58,13 +58,19 @@ kube-prometheus-stack:
   prometheus:
     enabled: true
     prometheusSpec:
-      # Discover all servicemonitors, podmonitors and rules in all namespaces
+      # Discover all servicemonitors, podmonitors, probes and rules in all namespaces
+      serviceMonitorSelectorNilUsesHelmValues: false
       serviceMonitorNamespaceSelector: {}
       serviceMonitorSelector: {}
+      podMonitorSelectorNilUsesHelmValues: false
       podMonitorNamespaceSelector: {}
       podMonitorSelector: {}
+      ruleSelectorNilUsesHelmValues: false
       ruleNamespaceSelector: {}
       ruleSelector: {}
+      probeNamespaceSelector: {}
+      probeSelector: {}
+      probeSelectorNilUsesHelmValues: false
       storageSpec:
         volumeClaimTemplate:
           spec:
