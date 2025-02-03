@@ -9,8 +9,5 @@ spec:
     kind: ImageCatalog
     name: timescaledb
     major: 16
-  imagePullPolicy: IfNotPresent
-  postgresUID: 70
-  postgresGID: 70
   storage:
     size: 10Gi
