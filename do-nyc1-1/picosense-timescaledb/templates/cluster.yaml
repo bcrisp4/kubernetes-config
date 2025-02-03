@@ -1,0 +1,14 @@
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: picosense-timescaledb
+spec:
+  instances: 1
+  imageCatalogRef:
+    apiGroup: postgresql.cnpg.io
+    kind: ImageCatalog
+    name: timescaledb
+    major: 16
+  imagePullPolicy: IfNotPresent
+  postgresUID: 70
+  postgresGID: 70

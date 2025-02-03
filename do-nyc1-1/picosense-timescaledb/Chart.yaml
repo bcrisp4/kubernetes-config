@@ -1,0 +1,5 @@
+apiVersion: v2
+type: application
+name: picosense-timescaledb
+description: A Helm chart that deploys a TimescaleDB for PicoSense
+version: 0.1.0
