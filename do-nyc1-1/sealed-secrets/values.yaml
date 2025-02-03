@@ -8,8 +8,4 @@ sealed-secrets:
       memory: 100M
   metrics:
     serviceMonitor:
-      enabled: false
-      labels: {}
-      annotations: {}
-      interval: ""
-      scrapeTimeout: ""
+      enabled: true
