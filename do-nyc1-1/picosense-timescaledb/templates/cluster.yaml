@@ -20,3 +20,5 @@ spec:
   postgresql:
     shared_preload_libraries:
       - timescaledb
+  monitoring:
+    enablePodMonitor: true
