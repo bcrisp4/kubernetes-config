@@ -1,0 +1,49 @@
+kube-prometheus-stack:
+  alertmanager:
+    enabled: true
+    ingress:
+      enabled: true
+      ingressClassName: tailscale
+      hosts:
+        - alertmanager
+      paths:
+        - /
+      tls:
+        - secretName: alertmanager-tls
+          hosts:
+            - alertmanager
+  grafana:
+    enabled: true
+    admin:
+      existingSecret: grafana-admin
+      userKey: user
+      passwordKey: password
+    persistence:
+      enabled: true
+      size: 5Gi
+    ingress:
+      enabled: true
+      ingressClassName: tailscale
+      hosts:
+        - grafana
+      paths:
+        - /
+      tls:
+        - secretName: grafana-tls
+          hosts:
+            - grafana
+  prometheusOperator:
+    enabled: true
+  prometheus:
+    enabled: true
+    ingress:
+      enabled: true
+      ingressClassName: tailscale
+      hosts:
+        - prometheus
+      paths:
+        - /
+      tls:
+        - secretName: prometheus-tls
+          hosts:
+            - prometheus
