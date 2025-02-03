@@ -12,3 +12,5 @@ spec:
   imagePullPolicy: IfNotPresent
   postgresUID: 70
   postgresGID: 70
+  storage:
+    size: 10Gi
