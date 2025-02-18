@@ -29,6 +29,7 @@ minecraft:
     whitelist: bcrisp4
     ops: bcrisp4
     motd: "Minecraft server numero uno"
+    viewDistance: "16"
     rcon:
       enabled: true
       existingSecret: rcon-secret
