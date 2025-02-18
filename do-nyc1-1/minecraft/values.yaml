@@ -8,10 +8,10 @@ minecraft:
 
   resources:
     requests:
-      cpu: 500m
-      memory: 512Mi
+      cpu: 1000m
+      memory: 1000Mi
     limits:
-      memory: 1024Mi
+      memory: 1200Mi
 
   persistence:
     dataDir:
