@@ -31,7 +31,7 @@ minecraft:
     motd: "Minecraft server numero uno"
     rcon:
       enabled: true
-      withGeneratedPassword: true # Automatically generate a strong random password.
+      existingSecret: rcon-secret
       port: 25575
 
   mcbackup:
