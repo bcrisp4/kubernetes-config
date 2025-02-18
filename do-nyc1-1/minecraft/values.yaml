@@ -1,5 +1,5 @@
 minecraft:
-  nameOverride: "minecraft-1"
+  nameOverride: "1"
 
   # Note: Minecraft is not horizontally scalable.
   # The server state (world data, player data, etc.) cannot be synchronized across multiple replicas,
