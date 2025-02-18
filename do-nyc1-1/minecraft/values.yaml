@@ -14,7 +14,7 @@ minecraft:
       cpu: 1000m
       memory: 1000Mi
     limits:
-      memory: 1200Mi
+      memory: 2000Mi
 
   persistence:
     dataDir:
@@ -52,9 +52,9 @@ minecraft:
     resources:
       requests:
         cpu: 100m
-        memory: 256Mi
+        memory: 250Mi
       limits:
-        memory: 512Mi # Enforces a memory limit for mcbackup.
+        memory: 1000Mi # Enforces a memory limit for mcbackup.
     persistence:
       backupDir:
         enabled: true
