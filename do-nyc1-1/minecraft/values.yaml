@@ -6,7 +6,7 @@ minecraft:
   # so replicaCount must always be 1 to ensure a consistent game world.
   replicaCount: 1
 
-  workloadAsStatefulSet: false
+  workloadAsStatefulSet: true
   strategyType: RollingUpdate
 
   resources:
