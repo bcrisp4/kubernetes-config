@@ -6,6 +6,9 @@ minecraft:
   # so replicaCount must always be 1 to ensure a consistent game world.
   replicaCount: 1
 
+  workloadAsStatefulSet: false
+  strategyType: RollingUpdate
+
   resources:
     requests:
       cpu: 1000m
@@ -30,10 +33,15 @@ minecraft:
     ops: bcrisp4
     motd: "Minecraft server numero uno"
     viewDistance: 16
+    difficulty: "normal"
+
     rcon:
       enabled: true
       existingSecret: rcon-secret
       port: 25575
+
+  extraEnv:
+    PAUSE_WHEN_EMPTY_SECONDS: -1
 
   mcbackup:
     enabled: true
