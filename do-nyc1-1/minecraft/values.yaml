@@ -28,6 +28,10 @@ minecraft:
       enabled: true
       withGeneratedPassword: true # Automatically generate a strong random password.
       port: 25575
+    whitelist:
+      - "bcrisp4"
+    ops:
+      - "bcrisp4"
 
   mcbackup:
     enabled: true
