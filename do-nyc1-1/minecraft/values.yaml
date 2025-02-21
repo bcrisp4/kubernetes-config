@@ -11,10 +11,10 @@ minecraft:
 
   resources:
     requests:
-      cpu: 1000m
-      memory: 1000Mi
-    limits:
+      cpu: 2000m
       memory: 2000Mi
+    limits:
+      memory: 6000Mi
 
   persistence:
     dataDir:
@@ -32,7 +32,7 @@ minecraft:
     whitelist: bcrisp4
     ops: bcrisp4
     motd: "Minecraft server numero uno"
-    viewDistance: 16
+    viewDistance: 32
     difficulty: "normal"
 
     rcon:
