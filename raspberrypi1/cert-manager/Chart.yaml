@@ -4,6 +4,6 @@ name: cert-manager
 description: A Helm chart that deploys cert-manager
 
 dependencies:
-- name: cert-manager
-  version: ^1.16.1
-  repository: https://charts.jetstack.io
+  - name: cert-manager
+    version: ~v1.17
+    repository: https://charts.jetstack.io
