@@ -1,0 +1,96 @@
+kube-prometheus-stack:
+  alertmanager:
+    enabled: true
+    ingress:
+      enabled: true
+      ingressClassName: tailscale
+      hosts:
+        - alertmanager
+      paths:
+        - /
+      tls:
+        - secretName: alertmanager-tls
+          hosts:
+            - alertmanager
+    resources:
+      requests:
+        cpu: 25m
+        memory: 100Mi
+      limits:
+        memory: 100Mi
+
+  grafana:
+    enabled: true
+    admin:
+      existingSecret: grafana-admin
+      userKey: user
+      passwordKey: password
+    persistence:
+      enabled: true
+      size: 500Mi
+    ingress:
+      enabled: true
+      ingressClassName: tailscale
+      hosts:
+        - grafana
+      paths:
+        - /
+      tls:
+        - secretName: grafana-tls
+          hosts:
+            - grafana
+    resources:
+      requests:
+        cpu: 100m
+        memory: 500Mi
+      limits:
+        memory: 600Mi
+
+  prometheusOperator:
+    enabled: true
+    resources:
+      requests:
+        cpu: 25m
+        memory: 50Mi
+      limits:
+        memory: 60Mi
+
+  prometheus:
+    enabled: true
+    prometheusSpec:
+      # Discover all servicemonitors, podmonitors, probes and rules in all namespaces
+      serviceMonitorSelectorNilUsesHelmValues: false
+      serviceMonitorNamespaceSelector: {}
+      serviceMonitorSelector: {}
+      podMonitorSelectorNilUsesHelmValues: false
+      podMonitorNamespaceSelector: {}
+      podMonitorSelector: {}
+      ruleSelectorNilUsesHelmValues: false
+      ruleNamespaceSelector: {}
+      ruleSelector: {}
+      probeNamespaceSelector: {}
+      probeSelector: {}
+      probeSelectorNilUsesHelmValues: false
+      storageSpec:
+        volumeClaimTemplate:
+          spec:
+            resources:
+              requests:
+                storage: 5Gi
+      resources:
+        requests:
+          cpu: 250m
+          memory: 1000Mi
+        limits:
+          memory: 1000Mi
+    ingress:
+      enabled: true
+      ingressClassName: tailscale
+      hosts:
+        - prometheus
+      paths:
+        - /
+      tls:
+        - secretName: prometheus-tls
+          hosts:
+            - prometheus
