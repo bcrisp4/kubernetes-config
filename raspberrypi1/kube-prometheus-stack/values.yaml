@@ -28,6 +28,8 @@ kube-prometheus-stack:
     persistence:
       enabled: true
       size: 500Mi
+    initChownData:
+      enabled: false
     ingress:
       enabled: true
       ingressClassName: tailscale
