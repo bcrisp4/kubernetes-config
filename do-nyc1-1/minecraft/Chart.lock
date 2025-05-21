@@ -1,6 +1,0 @@
-dependencies:
-- name: minecraft
-  repository: https://itzg.github.io/minecraft-server-charts
-  version: 4.23.7
-digest: sha256:dfbf521c8ac4850922a76fc0cfd79e2143d543a95b53f24e1006ff75af3333e8
-generated: "2025-02-18T14:04:54.387512-05:00"
