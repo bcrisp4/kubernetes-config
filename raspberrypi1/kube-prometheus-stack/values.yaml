@@ -21,6 +21,9 @@ kube-prometheus-stack:
 
   grafana:
     enabled: true
+    grafana.ini:
+      server:
+        domain: grafana.marlin-tet.ts.net
     admin:
       existingSecret: grafana-admin
       userKey: user
