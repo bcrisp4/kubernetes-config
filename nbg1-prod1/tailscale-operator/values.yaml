@@ -13,3 +13,6 @@ tailscale-operator:
         memory: 100Mi
       limits:
         memory: 100Mi
+
+  proxyConfig:
+    defaultTags: "tag:k8s-nbg1-prod1"
