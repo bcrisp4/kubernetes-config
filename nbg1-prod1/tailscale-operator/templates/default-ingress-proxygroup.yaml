@@ -6,4 +6,5 @@ metadata:
 spec:
   replicas: 2
   type: ingress
-  tags: tag:k8s-nbg1-prod1
+  tags:
+    - tag:k8s-nbg1-prod1
