@@ -15,7 +15,7 @@ cert-manager:
   prometheus:
     enabled: true
     servicemonitor:
-      enabled: true
+      enabled: false
 
   webhook:
     replicaCount: 1
