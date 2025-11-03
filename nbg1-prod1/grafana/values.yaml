@@ -5,7 +5,7 @@ grafana:
       root_url: "%(protocol)s://%(domain)s"
   admin:
     existingSecret: grafana-admin
-    userKey: user
+    userKey: username
     passwordKey: password
   persistence:
     enabled: true
