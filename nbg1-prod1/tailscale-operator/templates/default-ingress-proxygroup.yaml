@@ -1,0 +1,8 @@
+apiVersion: tailscale.com/v1alpha1
+kind: ProxyGroup
+metadata:
+  name: default-ingress
+  namespace: {{ .Release.Namespace }}
+spec:
+  replicas: 2
+  type: ingress
