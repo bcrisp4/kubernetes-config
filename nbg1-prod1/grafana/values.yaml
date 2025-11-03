@@ -1,0 +1,31 @@
+grafana:
+  grafana.ini:
+    server:
+      domain: grafana.marlin-tet.ts.net
+      root_url: "%(protocol)s://%(domain)s"
+  admin:
+    existingSecret: grafana-admin
+    userKey: user
+    passwordKey: password
+  persistence:
+    enabled: true
+    size: 500Mi
+  initChownData:
+    enabled: false
+  ingress:
+    enabled: true
+    ingressClassName: tailscale
+    hosts:
+      - grafana
+    paths:
+      - /
+    tls:
+      - secretName: grafana-tls
+        hosts:
+          - grafana
+  resources:
+    requests:
+      cpu: 100m
+      memory: 300Mi
+    limits:
+      memory: 500Mi
