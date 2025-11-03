@@ -1,0 +1,10 @@
+apiVersion: v2
+name: hcloud-csi
+description: A Helm chart for Hetzner Cloud CSI Driver
+type: application
+version: 0.1.0
+
+dependencies:
+  - name: hcloud-csi
+    version: ~2
+    repository: https://charts.hetzner.cloud
