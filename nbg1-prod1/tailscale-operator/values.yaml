@@ -1,0 +1,15 @@
+tailscale-operator:
+  ingressClass:
+    enabled: true
+
+  installCRDs: true
+
+  operatorConfig:
+    defaultTags:
+      - tag:k8s-operator-nbg1-prod1
+    resources:
+      requests:
+        cpu: 25m
+        memory: 100Mi
+      limits:
+        memory: 100Mi
