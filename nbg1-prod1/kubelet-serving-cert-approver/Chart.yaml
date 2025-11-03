@@ -1,0 +1,5 @@
+apiVersion: v2
+version: 0.1.0
+name: kubelet-serving-cert-approver
+description: A Helm chart that deploys kubelet-serving-cert-approver
+appVersion: "0.9.3"
