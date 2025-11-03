@@ -5,13 +5,13 @@ kube-prometheus-stack:
       enabled: true
       ingressClassName: tailscale
       hosts:
-        - alertmanager
+        - alertmanager-rpi
       paths:
         - /
       tls:
         - secretName: alertmanager-tls
           hosts:
-            - alertmanager
+            - alertmanager-rpi
     resources:
       requests:
         cpu: 25m
@@ -38,13 +38,13 @@ kube-prometheus-stack:
       enabled: true
       ingressClassName: tailscale
       hosts:
-        - grafana
+        - grafana-rpi
       paths:
         - /
       tls:
         - secretName: grafana-tls
           hosts:
-            - grafana
+            - grafana-rpi
     resources:
       requests:
         cpu: 100m
@@ -93,10 +93,10 @@ kube-prometheus-stack:
       enabled: true
       ingressClassName: tailscale
       hosts:
-        - prometheus
+        - prometheus-rpi
       paths:
         - /
       tls:
         - secretName: prometheus-tls
           hosts:
-            - prometheus
+            - prometheus-rpi
