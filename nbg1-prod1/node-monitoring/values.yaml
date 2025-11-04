@@ -60,7 +60,7 @@ alloy:
           endpoint {
             url = "http://loki-gateway.loki.svc.cluster.local/loki/api/v1/push"
             headers = {
-              "X-Scope-OrgID" = "prod"
+              "X-Scope-OrgID" = "prod",
             }
           }
         }
