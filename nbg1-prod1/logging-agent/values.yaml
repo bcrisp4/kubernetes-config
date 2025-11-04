@@ -48,7 +48,7 @@ alloy:
 
         // Receive Talos service logs over TCP (JSON lines format)
         otelcol.receiver.tcplog "talos_service" {
-          listen_address = "0.0.0.0:6051"
+          listen_address = "127.0.0.1:6051"
           add_attributes = true
 
           output {
@@ -58,7 +58,7 @@ alloy:
 
         // Receive Talos kernel logs over TCP (JSON lines format)
         otelcol.receiver.tcplog "talos_kernel" {
-          listen_address = "0.0.0.0:6050"
+          listen_address = "127.0.0.1:6050"
           add_attributes = true
 
           output {
