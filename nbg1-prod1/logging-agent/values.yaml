@@ -49,35 +49,59 @@ alloy:
         // Receive Talos service logs over TCP (JSON lines format)
         otelcol.receiver.tcplog "talos_service" {
           listen_address = "0.0.0.0:6051"
-          
-          // Parse each line as JSON
-          operators = [
-            {
-              type       = "json_parser",
-              parse_from = "body",
-            },
-          ]
-
           add_attributes = true
 
           output {
-            logs = [otelcol.processor.attributes.talos_service.input]
+            logs = [otelcol.processor.transform.talos_service.input]
           }
         }
 
         // Receive Talos kernel logs over TCP (JSON lines format)
         otelcol.receiver.tcplog "talos_kernel" {
           listen_address = "0.0.0.0:6050"
-
-          // Parse each line as JSON
-          operators = [
-            {
-              type       = "json_parser",
-              parse_from = "body",
-            },
-          ]
-
           add_attributes = true
+
+          output {
+            logs = [otelcol.processor.transform.talos_kernel.input]
+          }
+        }
+
+        // Parse JSON from service logs and extract fields as attributes
+        otelcol.processor.transform "talos_service" {
+          error_mode = "ignore"
+
+          log_statements {
+            context = "log"
+            statements = [
+              // Parse body as JSON
+              `merge_maps(cache, ParseJSON(body), "upsert") where IsMatch(body, "^\\{")`,
+              // Extract fields as attributes
+              `set(attributes["talos-service"], cache["talos-service"])`,
+              `set(attributes["talos-level"], cache["talos-level"])`,
+              `set(attributes["msg"], cache["msg"])`,
+            ]
+          }
+
+          output {
+            logs = [otelcol.processor.attributes.talos_service.input]
+          }
+        }
+
+        // Parse JSON from kernel logs and extract fields as attributes
+        otelcol.processor.transform "talos_kernel" {
+          error_mode = "ignore"
+
+          log_statements {
+            context = "log"
+            statements = [
+              // Parse body as JSON
+              `merge_maps(cache, ParseJSON(body), "upsert") where IsMatch(body, "^\\{")`,
+              // Extract fields as attributes
+              `set(attributes["facility"], cache["facility"])`,
+              `set(attributes["talos-level"], cache["talos-level"])`,
+              `set(attributes["msg"], cache["msg"])`,
+            ]
+          }
 
           output {
             logs = [otelcol.processor.attributes.talos_kernel.input]
