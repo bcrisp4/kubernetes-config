@@ -5,6 +5,7 @@ loki:
       - secretRef:
           name: s3-credentials
   loki:
+    revisionHistoryLimit: 0
     schemaConfig:
       configs:
         - from: 2024-04-01
