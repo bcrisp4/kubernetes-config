@@ -109,6 +109,12 @@ loki:
         memory: 128Mi
       limits:
         memory: 256Mi
+  resultsCache:
+    replicas: 1
+    allocatedMemory: 256
+  chunksCache:
+    replicas: 1
+    allocatedMemory: 2048
 
   # Disable experimental components
   bloomPlanner:
