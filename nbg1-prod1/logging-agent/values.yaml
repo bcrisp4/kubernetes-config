@@ -107,7 +107,7 @@ alloy:
         // Listen for Talos service logs on UDP port 6051
         loki.source.syslog "talos_service" {
           listener {
-            address                  = "127.0.0.1:6051"
+            address                  = "0.0.0.0:6051"
             protocol                 = "udp"
             labels                   = { source = "talos-service" }
             use_incoming_timestamp   = true
@@ -120,7 +120,7 @@ alloy:
         // Listen for Talos kernel logs on UDP port 6050
         loki.source.syslog "talos_kernel" {
           listener {
-            address                  = "127.0.0.1:6050"
+            address                  = "0.0.0.0:6050"
             protocol                 = "udp"
             labels                   = { source = "talos-kernel" }
             use_incoming_timestamp   = true
