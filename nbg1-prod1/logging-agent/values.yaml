@@ -45,6 +45,91 @@ alloy:
           forward_to = [loki.write.default.receiver]
         }
 
+        // Relabel syslog metadata to retain labels
+        loki.relabel "talos_service_logs" {
+          forward_to = [loki.write.default.receiver]
+
+          rule {
+            source_labels = ["__syslog_message_hostname"]
+            target_label  = "hostname"
+          }
+
+          rule {
+            source_labels = ["__syslog_message_severity"]
+            target_label  = "severity"
+          }
+
+          rule {
+            source_labels = ["talos-service"]
+            target_label  = "service"
+          }
+
+          rule {
+            source_labels = ["talos-level"]
+            target_label  = "level"
+          }
+
+          rule {
+            action = "labeldrop"
+            regex  = "talos-.*"
+          }
+        }
+
+        loki.relabel "talos_kernel_logs" {
+          forward_to = [loki.write.default.receiver]
+
+          rule {
+            source_labels = ["__syslog_message_hostname"]
+            target_label  = "hostname"
+          }
+
+          rule {
+            source_labels = ["__syslog_message_severity"]
+            target_label  = "severity"
+          }
+
+          rule {
+            source_labels = ["facility"]
+            target_label  = "facility"
+          }
+
+          rule {
+            source_labels = ["talos-level"]
+            target_label  = "level"
+          }
+
+          rule {
+            action = "labeldrop"
+            regex  = "talos-.*"
+          }
+        }
+
+        // Listen for Talos service logs on UDP port 6051
+        loki.source.syslog "talos_service" {
+          listener {
+            address                  = "0.0.0.0:6051"
+            protocol                 = "udp"
+            labels                   = { source = "talos-service" }
+            use_incoming_timestamp   = true
+            max_message_length       = 102400
+          }
+
+          forward_to = [loki.relabel.talos_service_logs.receiver]
+        }
+
+        // Listen for Talos kernel logs on UDP port 6050
+        loki.source.syslog "talos_kernel" {
+          listener {
+            address                  = "0.0.0.0:6050"
+            protocol                 = "udp"
+            labels                   = { source = "talos-kernel" }
+            use_incoming_timestamp   = true
+            max_message_length       = 102400
+          }
+
+          forward_to = [loki.relabel.talos_kernel_logs.receiver]
+        }
+
         // Write logs to Loki
         loki.write "default" {
           endpoint {
@@ -58,6 +143,9 @@ alloy:
       enabled: false
     mounts:
       varlog: true
+    enableHttpServerPort: true
+    listenAddr: 127.0.0.1
+    listenPort: 12345
     resources:
       requests:
         cpu: 50m
@@ -66,6 +154,7 @@ alloy:
         memory: 256Mi
   controller:
     type: "daemonset"
+    hostNetwork: true
     tolerations:
       - key: "node-role.kubernetes.io/control-plane"
         operator: "Exists"
