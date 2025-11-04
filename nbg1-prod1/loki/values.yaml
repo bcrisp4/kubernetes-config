@@ -1,6 +1,6 @@
 loki:
   deploymentMode: Distributed
-  globals:
+  global:
     extraArgs:
       - -config.expand-env=true
     extraEnvFrom:
