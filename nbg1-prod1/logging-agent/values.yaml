@@ -191,7 +191,7 @@ alloy:
       enabled: false
     mounts:
       varlog: true
-    enableHttpServerPort: true
+    enableHttpServerPort: false
     listenAddr: 127.0.0.1
     listenPort: 12345
     resources:
