@@ -187,6 +187,7 @@ alloy:
         memory: 256Mi
   controller:
     type: "daemonset"
+    dnsPolicy: "ClusterFirstWithHostNet"
     hostNetwork: true
     tolerations:
       - key: "node-role.kubernetes.io/control-plane"
