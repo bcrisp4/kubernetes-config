@@ -1,0 +1,81 @@
+alloy:
+  crds: false
+  alloy:
+    configMap:
+      create: true
+      content: |-
+        // Discover pods to scrape logs from
+        discovery.kubernetes "pods" {
+          role = "pod"
+        }
+
+        // Relabel pods to extract metadata
+        discovery.relabel "pods" {
+          targets = discovery.kubernetes.pods.targets
+
+          // Set the path to the pod log files
+          rule {
+            source_labels = ["__meta_kubernetes_pod_uid", "__meta_kubernetes_pod_container_name"]
+            target_label  = "__path__"
+            separator     = "/"
+            replacement   = "/var/log/pods/*$1/*.log"
+          }
+
+          // Add pod metadata as labels
+          rule {
+            source_labels = ["__meta_kubernetes_namespace"]
+            target_label  = "namespace"
+          }
+
+          rule {
+            source_labels = ["__meta_kubernetes_pod_name"]
+            target_label  = "pod"
+          }
+
+          rule {
+            source_labels = ["__meta_kubernetes_pod_container_name"]
+            target_label  = "container"
+          }
+
+          rule {
+            source_labels = ["__meta_kubernetes_pod_node_name"]
+            target_label  = "node"
+          }
+
+          rule {
+            source_labels = ["__meta_kubernetes_pod_label_app"]
+            target_label  = "app"
+          }
+        }
+
+        // Read and parse the log files
+        loki.source.file "pods" {
+          targets    = discovery.relabel.pods.output
+          forward_to = [loki.write.default.receiver]
+        }
+
+        // Write logs to Loki
+        loki.write "default" {
+          endpoint {
+            url = "http://loki-gateway.loki.svc.cluster.local/loki/api/v1/push"
+            headers = {
+              "X-Scope-OrgID" = "prod"
+            }
+          }
+        }
+    clustering:
+      enabled: false
+    mounts:
+      varlog: true
+    resources:
+      requests:
+        cpu: 100m
+        memory: 128Mi
+      limits:
+        memory: 256Mi
+  controller:
+    type: "daemonset"
+    tolerations:
+      - key: "node-role.kubernetes.io/control-plane"
+        operator: "Exists"
+        effect: "NoSchedule"

@@ -1,0 +1,10 @@
+apiVersion: v2
+name: node-monitoring
+description: A Helm chart for node monitoring config
+type: application
+version: 0.1.0
+
+dependencies:
+  - name: alloy
+    version: ~1
+    repository: https://grafana.github.io/helm-charts
