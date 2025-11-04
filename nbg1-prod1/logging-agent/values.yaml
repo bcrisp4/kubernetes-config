@@ -12,11 +12,6 @@ alloy:
           }]
         }
 
-        // Discover pods for metadata enrichment
-        discovery.kubernetes "pods" {
-          role = "pod"
-        }
-
         // Relabel to add pod metadata
         discovery.relabel "pod_logs" {
           targets = local.file_match.pods.targets
