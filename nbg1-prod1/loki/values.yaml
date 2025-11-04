@@ -99,7 +99,14 @@ loki:
       limits:
         memory: 1Gi
   lokiCanary:
-    enabled: false
+    kind: Deployment
+    replicas: 1
+    resources:
+      requests:
+        cpu: 100m
+        memory: 128Mi
+      limits:
+        memory: 256Mi
   resultsCache:
     replicas: 1
     allocatedMemory: 256
