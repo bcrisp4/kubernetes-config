@@ -52,8 +52,8 @@ alloy:
           // Parse each line as JSON
           operators = [
             {
-              type = "json_parser"
-              parse_from = "body"
+              type       = "json_parser",
+              parse_from = "body",
             },
           ]
 
@@ -71,8 +71,8 @@ alloy:
           // Parse each line as JSON
           operators = [
             {
-              type = "json_parser"
-              parse_from = "body"
+              type       = "json_parser",
+              parse_from = "body",
             },
           ]
 
