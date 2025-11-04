@@ -1,6 +1,8 @@
 loki:
   deploymentMode: Distributed
   globals:
+    extraArgs:
+      - -config.expand-env=true
     extraEnvFrom:
       - secretRef:
           name: s3-credentials
@@ -31,6 +33,8 @@ loki:
         admin: bc4-loki-nbg1-prod1
       s3:
         endpoint: nbg1.your-objectstorage.com
+        accessKeyId: ${AWS_ACCESS_KEY_ID}
+        secretAccessKey: ${AWS_SECRET_ACCESS_KEY}
 
   ingester:
     replicas: 3
