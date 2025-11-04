@@ -100,6 +100,15 @@ loki:
         memory: 512Mi
       limits:
         memory: 1Gi
+  lokiCanary:
+    kind: Deployment
+    replicas: 1
+    resources:
+      requests:
+        cpu: 100m
+        memory: 128Mi
+      limits:
+        memory: 256Mi
 
   # Disable experimental components
   bloomPlanner:
