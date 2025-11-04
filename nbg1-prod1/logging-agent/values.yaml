@@ -76,9 +76,10 @@ alloy:
               // Parse body as JSON
               `merge_maps(cache, ParseJSON(body), "upsert") where IsMatch(body, "^\\{")`,
               // Extract fields as attributes
-              `set(attributes["talos-service"], cache["talos-service"])`,
-              `set(attributes["talos-level"], cache["talos-level"])`,
+              `set(attributes["level"], cache["talos-level"])`,
               `set(attributes["msg"], cache["msg"])`,
+              // Set service_name as talos-<service>
+              `set(attributes["service_name"], Concat(["talos-", cache["talos-service"]], "")) where cache["talos-service"] != nil`,
             ]
           }
 
@@ -98,8 +99,10 @@ alloy:
               `merge_maps(cache, ParseJSON(body), "upsert") where IsMatch(body, "^\\{")`,
               // Extract fields as attributes
               `set(attributes["facility"], cache["facility"])`,
-              `set(attributes["talos-level"], cache["talos-level"])`,
+              `set(attributes["level"], cache["talos-level"])`,
               `set(attributes["msg"], cache["msg"])`,
+              // Set service_name to talos-kernel
+              `set(attributes["service_name"], "talos-kernel")`,
             ]
           }
 
@@ -113,7 +116,7 @@ alloy:
           action {
             key = "loki.attribute.labels"
             action = "insert"
-            value = "talos-service, talos-level, host"
+            value = "service_name, level, hostname"
           }
 
           action {
@@ -129,7 +132,7 @@ alloy:
           }
 
           action {
-            key = "host"
+            key = "hostname"
             action = "insert"
             value = env("HOSTNAME")
           }
@@ -144,7 +147,7 @@ alloy:
           action {
             key = "loki.attribute.labels"
             action = "insert"
-            value = "facility, talos-level, host"
+            value = "service_name, facility, level, hostname"
           }
 
           action {
@@ -160,7 +163,7 @@ alloy:
           }
 
           action {
-            key = "host"
+            key = "hostname"
             action = "insert"
             value = env("HOSTNAME")
           }
