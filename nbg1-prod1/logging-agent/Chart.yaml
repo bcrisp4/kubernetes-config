@@ -1,6 +1,6 @@
 apiVersion: v2
-name: node-monitoring
-description: A Helm chart for node monitoring config
+name: logging-agent
+description: A Helm chart for logging agent config
 type: application
 version: 0.1.0
 
