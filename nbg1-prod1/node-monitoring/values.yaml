@@ -5,53 +5,48 @@ alloy:
     configMap:
       create: true
       content: |-
-        // Discover pods to scrape logs from
+        // Discover all pod log files
+        local.file_match "pods" {
+          path_targets = [{
+            __path__ = "/var/log/pods/*/*/*.log",
+          }]
+        }
+
+        // Discover pods for metadata enrichment
         discovery.kubernetes "pods" {
           role = "pod"
         }
 
-        // Relabel pods to extract metadata
-        discovery.relabel "pods" {
-          targets = discovery.kubernetes.pods.targets
+        // Relabel to add pod metadata
+        discovery.relabel "pod_logs" {
+          targets = local.file_match.pods.targets
 
-          // Set the path to the pod log files
+          // Extract namespace, pod name, UID, and container from the file path
           rule {
-            source_labels = ["__meta_kubernetes_namespace", "__meta_kubernetes_pod_name", "__meta_kubernetes_pod_uid", "__meta_kubernetes_pod_container_name"]
-            target_label  = "__path__"
-            separator     = "/"
-            replacement   = "/var/log/pods/$1_$2_$3/$4/*.log"
-          }
-
-          // Add pod metadata as labels
-          rule {
-            source_labels = ["__meta_kubernetes_namespace"]
+            source_labels = ["__path__"]
+            regex         = "/var/log/pods/(?P<namespace>[^_]+)_(?P<pod>[^_]+)_(?P<uid>[^/]+)/(?P<container>[^/]+)/.*\\.log"
             target_label  = "namespace"
+            replacement   = "$1"
           }
 
           rule {
-            source_labels = ["__meta_kubernetes_pod_name"]
+            source_labels = ["__path__"]
+            regex         = "/var/log/pods/(?P<namespace>[^_]+)_(?P<pod>[^_]+)_(?P<uid>[^/]+)/(?P<container>[^/]+)/.*\\.log"
             target_label  = "pod"
+            replacement   = "$2"
           }
 
           rule {
-            source_labels = ["__meta_kubernetes_pod_container_name"]
+            source_labels = ["__path__"]
+            regex         = "/var/log/pods/(?P<namespace>[^_]+)_(?P<pod>[^_]+)_(?P<uid>[^/]+)/(?P<container>[^/]+)/.*\\.log"
             target_label  = "container"
-          }
-
-          rule {
-            source_labels = ["__meta_kubernetes_pod_node_name"]
-            target_label  = "node"
-          }
-
-          rule {
-            source_labels = ["__meta_kubernetes_pod_label_app"]
-            target_label  = "app"
+            replacement   = "$4"
           }
         }
 
         // Read and parse the log files
         loki.source.file "pods" {
-          targets    = discovery.relabel.pods.output
+          targets    = discovery.relabel.pod_logs.output
           forward_to = [loki.write.default.receiver]
         }
 
