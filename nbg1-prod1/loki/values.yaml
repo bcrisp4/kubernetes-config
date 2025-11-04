@@ -40,95 +40,107 @@ loki:
     replicas: 3
     resources:
       requests:
-        cpu: 250m
-        memory: 1Gi
+        cpu: 100m
+        memory: 512Mi
       limits:
-        memory: 2Gi
+        memory: 1Gi
     zoneAwareReplication:
       enabled: false
   querier:
-    replicas: 3
-    maxUnavailable: 2
+    replicas: 2
+    maxUnavailable: 1
     resources:
       requests:
-        cpu: 250m
-        memory: 1Gi
+        cpu: 200m
+        memory: 128Mi
       limits:
-        memory: 4Gi
+        memory: 512Mi
   queryFrontend:
     replicas: 2
     maxUnavailable: 1
     resources:
       requests:
-        cpu: 200m
-        memory: 512Mi
+        cpu: 100m
+        memory: 128Mi
       limits:
-        memory: 2Gi
+        memory: 512Mi
   queryScheduler:
     replicas: 2
+    resources:
+      requests:
+        cpu: 50m
+        memory: 64Mi
+      limits:
+        memory: 128Mi
+  distributor:
+    replicas: 2
+    maxUnavailable: 1
     resources:
       requests:
         cpu: 100m
         memory: 256Mi
       limits:
         memory: 512Mi
-  distributor:
-    replicas: 3
-    maxUnavailable: 2
-    resources:
-      requests:
-        cpu: 200m
-        memory: 512Mi
-      limits:
-        memory: 1Gi
   compactor:
     replicas: 1
     resources:
       requests:
-        cpu: 250m
-        memory: 1Gi
+        cpu: 100m
+        memory: 512Mi
       limits:
-        memory: 4Gi
+        memory: 2Gi
   indexGateway:
     replicas: 2
     maxUnavailable: 1
     resources:
       requests:
-        cpu: 200m
-        memory: 512Mi
+        cpu: 100m
+        memory: 128Mi
       limits:
-        memory: 1Gi
+        memory: 256Mi
   lokiCanary:
     kind: Deployment
     replicas: 1
     resources:
       requests:
-        cpu: 100m
-        memory: 128Mi
+        cpu: 25m
+        memory: 32Mi
       limits:
-        memory: 256Mi
+        memory: 64Mi
   resultsCache:
     replicas: 1
-    allocatedMemory: 256
+    allocatedMemory: 250
+    resources:
+      requests:
+        cpu: 100m
+        memory: 300Mi
+      limits:
+        memory: 300Mi
   chunksCache:
     replicas: 1
-    allocatedMemory: 2048
+    allocatedMemory: 2000
+    resources:
+      requests:
+        cpu: 100m
+        memory: 2500Mi
+      limits:
+        memory: 2500Mi
   gateway:
     replicas: 2
     resources:
       requests:
-        cpu: 100m
-        memory: 128Mi
+        cpu: 50m
+        memory: 32Mi
       limits:
-        memory: 256Mi
+        memory: 128Mi
   patternIngester:
     replicas: 2
     resources:
       requests:
         cpu: 100m
-        memory: 128Mi
+        memory: 256Mi
       limits:
-        memory: 512Mi
+        memory: 1Gi
 
   # Disable experimental components
   bloomPlanner:
