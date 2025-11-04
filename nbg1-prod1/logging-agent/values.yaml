@@ -2,6 +2,7 @@ alloy:
   crds:
     create: false
   alloy:
+    stabilityLevel: "experimental"
     configMap:
       create: true
       content: |-
