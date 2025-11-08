@@ -2,7 +2,7 @@
 apiVersion: external-secrets.io/v1
 kind: SecretStore
 metadata:
-  name: 1password-kubernetes
+  name: default
 spec:
   provider:
     onepasswordSDK:
