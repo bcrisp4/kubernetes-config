@@ -11,6 +11,7 @@ spec:
         serviceAccountSecretRef:
           name: 1password-kubernetes-token
           key: token
+          namespace: {{ .Release.Namespace }}
   conditions:
     - namespaces:
         - "grafana"
