@@ -6,41 +6,8 @@ loki:
     extraEnvFrom:
       - secretRef:
           name: s3-credentials
-    # CSI driver volumes for mTLS certificates
-    extraVolumes:
-      - name: tls-certs
-        csi:
-          driver: csi.cert-manager.io
-          readOnly: true
-          volumeAttributes:
-            csi.cert-manager.io/issuer-name: loki-ca-issuer
-            csi.cert-manager.io/issuer-kind: Issuer
-            csi.cert-manager.io/dns-names: "*.loki-headless.{{ .Release.Namespace }}.svc.cluster.local,*.loki.{{ .Release.Namespace }}.svc.cluster.local,loki.{{ .Release.Namespace }}.svc.cluster.local"
-            csi.cert-manager.io/duration: 168h # 7 days
-            csi.cert-manager.io/renew-before: 24h # Renew 1 day before expiry
-            csi.cert-manager.io/key-algorithm: ECDSA
-            csi.cert-manager.io/key-size: "256"
-            csi.cert-manager.io/key-usages: "digital signature,key encipherment,server auth,client auth"
-            csi.cert-manager.io/certificate-file: tls.crt
-            csi.cert-manager.io/ca-file: ca.crt
-            csi.cert-manager.io/privatekey-file: tls.key
-    extraVolumeMounts:
-      - name: tls-certs
-        mountPath: /etc/loki/tls
-        readOnly: true
   loki:
     revisionHistoryLimit: 0
-    server:
-      http_tls_config:
-        cert_file: /etc/loki/tls/tls.crt
-        key_file: /etc/loki/tls/tls.key
-        client_ca_file: /etc/loki/tls/ca.crt
-        client_auth_type: RequireAndVerifyClientCert
-      grpc_tls_config:
-        cert_file: /etc/loki/tls/tls.crt
-        key_file: /etc/loki/tls/tls.key
-        client_ca_file: /etc/loki/tls/ca.crt
-        client_auth_type: RequireAndVerifyClientCert
     schemaConfig:
       configs:
         - from: 2024-04-01
