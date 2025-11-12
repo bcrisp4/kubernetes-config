@@ -7,10 +7,10 @@ cert-manager:
 
   resources:
     requests:
-      cpu: 50m
-      memory: 64Mi
+      cpu: 30m
+      memory: 32M
     limits:
-      memory: 64Mi
+      memory: 64M
 
   prometheus:
     enabled: true
@@ -21,10 +21,10 @@ cert-manager:
     replicaCount: 1
     resources:
       requests:
-        cpu: 50m
-        memory: 64Mi
+        cpu: 30m
+        memory: 32M
       limits:
-        memory: 64Mi
+        memory: 64M
     timeoutSeconds: 20
 
   cainjector:
@@ -32,16 +32,28 @@ cert-manager:
     replicaCount: 1
     resources:
       requests:
-        cpu: 50m
-        memory: 64Mi
+        cpu: 30m
+        memory: 32M
       limits:
-        memory: 64Mi
+        memory: 64M
 
   startupapicheck:
     enabled: true
     resources:
       requests:
-        cpu: 50m
-        memory: 64Mi
+        cpu: 30m
+        memory: 32M
       limits:
-        memory: 64Mi
+        memory: 64M
+
+cert-manager-csi-driver:
+  resources:
+    requests:
+      cpu: 30m
+      memory: 32M
+    limits:
+      memory: 64M
+  app:
+    logLevel: 1 # 1 = info, 2 = debug
+  rbac:
+    create: true
