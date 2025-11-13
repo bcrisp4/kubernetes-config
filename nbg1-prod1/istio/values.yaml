@@ -1,5 +1,6 @@
 global:
   istioNamespace: istio
+profile: ambient
 istio:
   istiod:
     profile: ambient
