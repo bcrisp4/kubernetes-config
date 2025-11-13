@@ -1,4 +1,6 @@
 istio:
+  global:
+    istioNamespace: istio
   istiod:
     profile: ambient
   cni:
