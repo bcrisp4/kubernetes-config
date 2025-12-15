@@ -4,7 +4,8 @@ n8n:
     className: tailscale
     hosts:
       - host: n8n
-        paths: []
+        paths:
+          - /
     tls:
       - secretName: n8n-tls
         hosts:
