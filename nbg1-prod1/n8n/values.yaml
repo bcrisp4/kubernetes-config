@@ -5,7 +5,8 @@ n8n:
     hosts:
       - host: n8n
         paths:
-          - /
+          - path: /
+            pathType: Prefix
     tls:
       - secretName: n8n-tls
         hosts:
