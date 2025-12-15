@@ -1,0 +1,24 @@
+n8n:
+  ingress:
+    enabled: true
+    className: tailscale
+    hosts:
+      - host: n8n
+        paths: []
+    tls:
+      - secretName: n8n-tls
+        hosts:
+          - n8n
+
+  main:
+    persistence:
+      enabled: true
+      type: dynamic
+      size: 1Gi
+
+    resources:
+      requests:
+        cpu: 100m
+        memory: 256Mi
+      limits:
+        memory: 512Mi
