@@ -13,6 +13,15 @@ n8n:
           - n8n
 
   main:
+    config:
+      n8n:
+        host: n8n.marlin-tet.ts.net
+        protocol: https
+        editor:
+          baseUrl: https://n8n.marlin-tet.ts.net
+      webhook:
+        url: https://n8n.marlin-tet.ts.net
+
     persistence:
       enabled: true
       type: dynamic
