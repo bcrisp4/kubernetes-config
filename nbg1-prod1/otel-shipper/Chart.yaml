@@ -1,0 +1,10 @@
+apiVersion: v2
+name: otel-shipper
+description: OpenTelemetry Collector for shipping logs to Loki (in mesh)
+type: application
+version: 0.1.0
+
+dependencies:
+  - name: opentelemetry-collector
+    version: ~0.141
+    repository: https://open-telemetry.github.io/opentelemetry-helm-charts

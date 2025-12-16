@@ -1,0 +1,17 @@
+# Authorization policy for otel-shipper
+# Allows otel-receiver (hostNetwork, not in mesh) to push logs
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: otel-shipper
+  namespace: otel-shipper
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: opentelemetry-collector
+  action: ALLOW
+  rules:
+    # Allow otel-receiver to push logs (from node IPs, not in mesh)
+    - from:
+        - source:
+            remoteIpBlocks: ["10.0.0.0/24"]

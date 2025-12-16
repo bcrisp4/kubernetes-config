@@ -13,10 +13,10 @@ spec:
       app.kubernetes.io/component: gateway
   action: ALLOW
   rules:
-    # Allow logging-agent to push logs (uses hostNetwork, so matches by node IPs)
+    # Allow otel-shipper to push logs (in mesh)
     - from:
         - source:
-            remoteIpBlocks: ["10.0.0.0/24"]
+            namespaces: ["otel-shipper"]
     # Allow Grafana to query logs
     - from:
         - source:

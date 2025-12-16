@@ -1,0 +1,114 @@
+opentelemetry-collector:
+  mode: daemonset
+
+  image:
+    repository: otel/opentelemetry-collector-contrib
+
+  # NOT using hostNetwork - this runs in pod network (in mesh)
+  hostNetwork: false
+
+  # Run on all nodes including control plane
+  tolerations:
+    - key: "node-role.kubernetes.io/control-plane"
+      operator: "Exists"
+      effect: "NoSchedule"
+
+  resources:
+    requests:
+      cpu: 50m
+      memory: 64Mi
+    limits:
+      memory: 256Mi
+
+  # Enable pod log collection preset
+  presets:
+    logsCollection:
+      enabled: true
+      includeCollectorLogs: false
+      storeCheckpoints: true
+
+  # Configure ports
+  ports:
+    otlp:
+      enabled: true
+      containerPort: 4317
+      servicePort: 4317
+      protocol: TCP
+    otlp-http:
+      enabled: false
+    jaeger-compact:
+      enabled: false
+    jaeger-thrift:
+      enabled: false
+    jaeger-grpc:
+      enabled: false
+    zipkin:
+      enabled: false
+    metrics:
+      enabled: false
+
+  # Collector configuration
+  config:
+    receivers:
+      # Receive logs from otel-receiver
+      otlp:
+        protocols:
+          grpc:
+            endpoint: 0.0.0.0:4317
+
+    processors:
+      batch:
+        send_batch_size: 16384
+        timeout: 5s
+
+      memory_limiter:
+        check_interval: 1s
+        limit_mib: 200
+
+      # Transform Talos logs to extract fields
+      transform/talos:
+        error_mode: ignore
+        log_statements:
+          - context: log
+            statements:
+              # Extract service_name from talos-service attribute
+              - set(attributes["service_name"], Concat(["talos-", attributes["talos-service"]], "")) where attributes["talos-service"] != nil
+              # Set service_name for kernel logs
+              - set(attributes["service_name"], "talos-kernel") where attributes["log_type"] == "talos-kernel" and attributes["service_name"] == nil
+              # Extract level
+              - set(severity_text, attributes["talos-level"]) where attributes["talos-level"] != nil
+
+      # Add Loki-specific attributes
+      attributes/loki:
+        actions:
+          - key: loki.attribute.labels
+            value: service_name,job,host.name,k8s.namespace.name,k8s.pod.name,k8s.container.name
+            action: insert
+
+      # Add job label based on log type
+      attributes/job:
+        actions:
+          - key: job
+            value: talos
+            action: insert
+
+    exporters:
+      # Send to Loki via OTLP
+      otlphttp/loki:
+        endpoint: "http://loki-gateway.loki.svc.cluster.local:3100/otlp"
+        headers:
+          X-Scope-OrgID: "prod"
+
+    service:
+      pipelines:
+        # Pipeline for logs from otel-receiver (Talos logs)
+        logs/talos:
+          receivers: [otlp]
+          processors: [memory_limiter, transform/talos, attributes/job, attributes/loki, batch]
+          exporters: [otlphttp/loki]
+
+        # Pipeline for pod logs (from preset)
+        logs:
+          receivers: [filelog]
+          processors: [memory_limiter, attributes/loki, batch]
+          exporters: [otlphttp/loki]
