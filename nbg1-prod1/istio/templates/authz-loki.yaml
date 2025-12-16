@@ -1,0 +1,43 @@
+# Authorization policy for Loki gateway
+# Only allows specific services to access Loki
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: loki-gateway
+  namespace: loki
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/component: gateway
+  action: ALLOW
+  rules:
+    # Allow logging-agent to push logs
+    - from:
+        - source:
+            namespaces: ["logging-agent"]
+      to:
+        - operation:
+            methods: ["POST"]
+            paths: ["/loki/api/v1/push"]
+    # Allow Grafana to query logs
+    - from:
+        - source:
+            namespaces: ["grafana"]
+      to:
+        - operation:
+            methods: ["GET", "POST"]
+            paths: ["/loki/api/v1/*", "/api/prom/*"]
+---
+# Allow internal Loki components to communicate with each other
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: loki-internal
+  namespace: loki
+spec:
+  action: ALLOW
+  rules:
+    # Allow all traffic from within the loki namespace
+    - from:
+        - source:
+            namespaces: ["loki"]
