@@ -7,6 +7,11 @@ opentelemetry-collector:
   # NOT using hostNetwork - this runs in pod network (in mesh)
   hostNetwork: false
 
+  # Enable service for DaemonSet mode (disabled by default)
+  # Required for otel-receiver to forward logs to otel-shipper
+  service:
+    enabled: true
+
   # Run on all nodes including control plane
   tolerations:
     - key: "node-role.kubernetes.io/control-plane"
