@@ -29,7 +29,7 @@ n8n:
 
     resources:
       requests:
-        cpu: 100m
-        memory: 256Mi
+        cpu: 250m
+        memory: 500Mi
       limits:
-        memory: 512Mi
+        memory: 1000Mi
