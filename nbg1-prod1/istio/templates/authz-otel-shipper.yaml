@@ -1,5 +1,8 @@
 # Authorization policy for otel-shipper
 # Allows otel-receiver (hostNetwork, not in mesh) to push logs
+#
+# NOTE: Using ipBlocks (not remoteIpBlocks) because ztunnel only supports L4
+# attributes. remoteIpBlocks requires HTTP header parsing (X-Forwarded-For).
 apiVersion: security.istio.io/v1
 kind: AuthorizationPolicy
 metadata:
@@ -14,4 +17,4 @@ spec:
     # Allow otel-receiver to push logs (from node IPs, not in mesh)
     - from:
         - source:
-            remoteIpBlocks: ["10.0.0.0/24"]
+            ipBlocks: ["10.0.0.0/24"]
