@@ -13,10 +13,10 @@ spec:
       app.kubernetes.io/component: gateway
   action: ALLOW
   rules:
-    # Allow logging-agent to push logs
+    # Allow logging-agent to push logs (uses hostNetwork, so matches by node IPs)
     - from:
         - source:
-            namespaces: ["logging-agent"]
+            ipBlocks: ["10.0.0.0/24"]
     # Allow Grafana to query logs
     - from:
         - source:
