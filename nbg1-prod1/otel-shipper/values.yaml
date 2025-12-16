@@ -95,7 +95,7 @@ opentelemetry-collector:
     exporters:
       # Send to Loki via OTLP
       otlphttp/loki:
-        endpoint: "http://loki-gateway.loki.svc.cluster.local:3100/otlp"
+        endpoint: "http://loki-gateway.loki.svc.cluster.local/otlp"
         headers:
           X-Scope-OrgID: "prod"
 
