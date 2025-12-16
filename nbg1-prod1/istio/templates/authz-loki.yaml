@@ -1,5 +1,7 @@
 # Authorization policy for Loki gateway
 # Only allows specific services to access Loki
+# NOTE: In ambient mode without a waypoint proxy, only L4 policies are enforced.
+# HTTP-level filtering (methods, paths) requires a waypoint proxy.
 apiVersion: security.istio.io/v1
 kind: AuthorizationPolicy
 metadata:
@@ -15,18 +17,14 @@ spec:
     - from:
         - source:
             namespaces: ["logging-agent"]
-      to:
-        - operation:
-            methods: ["POST"]
-            paths: ["/loki/api/v1/push"]
     # Allow Grafana to query logs
     - from:
         - source:
             namespaces: ["grafana"]
-      to:
-        - operation:
-            methods: ["GET", "POST"]
-            paths: ["/loki/api/v1/*", "/api/prom/*"]
+    # Allow loki-canary for health checks
+    - from:
+        - source:
+            namespaces: ["loki"]
 ---
 # Allow internal Loki components to communicate with each other
 apiVersion: security.istio.io/v1
