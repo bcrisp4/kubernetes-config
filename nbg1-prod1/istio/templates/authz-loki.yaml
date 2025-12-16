@@ -16,7 +16,7 @@ spec:
     # Allow logging-agent to push logs (uses hostNetwork, so matches by node IPs)
     - from:
         - source:
-            ipBlocks: ["10.0.0.0/24"]
+            remoteIpBlocks: ["10.0.0.0/24"]
     # Allow Grafana to query logs
     - from:
         - source:
