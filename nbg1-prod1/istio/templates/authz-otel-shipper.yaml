@@ -14,7 +14,22 @@ spec:
       app.kubernetes.io/name: opentelemetry-collector
   action: ALLOW
   rules:
-    # Allow otel-receiver to push logs (from node IPs, not in mesh)
+    # Allow otel-receiver to push logs (from pod network, not in mesh)
     - from:
         - source:
-            ipBlocks: ["10.0.0.0/24"]
+            ipBlocks: ["10.244.0.0/16"]
+---
+# PeerAuthentication for otel-shipper to accept plaintext from otel-receiver
+# The mesh-wide STRICT mTLS policy blocks non-mesh traffic. otel-receiver
+# runs in hostNetwork mode (outside the mesh) and cannot do mTLS.
+apiVersion: security.istio.io/v1
+kind: PeerAuthentication
+metadata:
+  name: otel-shipper
+  namespace: otel-shipper
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: opentelemetry-collector
+  mtls:
+    mode: PERMISSIVE
