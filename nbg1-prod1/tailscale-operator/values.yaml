@@ -4,6 +4,11 @@ tailscale-operator:
 
   installCRDs: true
 
+  # Mount the pre-existing sealed secret
+  oauthSecretVolume:
+    secret:
+      secretName: operator-oauth
+
   operatorConfig:
     defaultTags:
       - tag:k8s-operator-nbg1-prod1
