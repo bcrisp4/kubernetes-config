@@ -104,6 +104,9 @@ opentelemetry-collector:
           X-Scope-OrgID: "prod"
 
     service:
+      telemetry:
+        logs:
+          level: warn
       pipelines:
         # Pipeline for logs from otel-receiver (Talos logs)
         logs/talos:

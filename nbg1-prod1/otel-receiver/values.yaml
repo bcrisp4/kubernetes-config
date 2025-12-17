@@ -14,10 +14,9 @@ opentelemetry-collector:
       operator: "Exists"
       effect: "NoSchedule"
 
-  # Minimal resources - this only receives and forwards
   resources:
     requests:
-      cpu: 10m
+      cpu: 100m
       memory: 32Mi
     limits:
       memory: 64Mi
@@ -88,6 +87,9 @@ opentelemetry-collector:
           insecure: true
 
     service:
+      telemetry:
+        logs:
+          level: warn
       pipelines:
         logs/talos_service:
           receivers: [tcplog/talos_service]
