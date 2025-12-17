@@ -1,0 +1,30 @@
+vertical-pod-autoscaler:
+  recommender:
+    replicas: 1
+    extraArgs:
+      - --pod-recommendation-min-cpu-millicores=10
+      - --pod-recommendation-min-memory-mb=32
+    resources:
+      requests:
+        cpu: 50m
+        memory: 128Mi
+      limits:
+        memory: 256Mi
+
+  updater:
+    replicas: 1
+    resources:
+      requests:
+        cpu: 50m
+        memory: 128Mi
+      limits:
+        memory: 256Mi
+
+  admissionController:
+    replicas: 1
+    resources:
+      requests:
+        cpu: 50m
+        memory: 128Mi
+      limits:
+        memory: 256Mi

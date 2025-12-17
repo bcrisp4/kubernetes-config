@@ -1,0 +1,23 @@
+apiVersion: autoscaling.k8s.io/v1
+kind: VerticalPodAutoscaler
+metadata:
+  name: otel-shipper
+spec:
+  targetRef:
+    apiVersion: apps/v1
+    kind: DaemonSet
+    name: otel-shipper-opentelemetry-collector-agent
+  updatePolicy:
+    updateMode: InPlaceOrRecreate
+  resourcePolicy:
+    containerPolicies:
+      - containerName: opentelemetry-collector
+        minAllowed:
+          cpu: 10m
+          memory: 64Mi
+        maxAllowed:
+          cpu: 100m
+          memory: 128Mi
+        controlledResources:
+          - cpu
+          - memory
