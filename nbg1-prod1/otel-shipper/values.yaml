@@ -104,13 +104,19 @@ opentelemetry-collector:
         headers:
           X-Scope-OrgID: "prod"
 
+      # Debug exporter for troubleshooting
+      debug:
+        verbosity: detailed
+        sampling_initial: 5
+        sampling_thereafter: 200
+
     service:
       pipelines:
         # Pipeline for logs from otel-receiver (Talos logs)
         logs/talos:
           receivers: [otlp]
           processors: [memory_limiter, transform/talos, attributes/job, attributes/loki, batch]
-          exporters: [otlphttp/loki]
+          exporters: [otlphttp/loki, debug]
 
         # Pipeline for pod logs (from preset)
         logs:
