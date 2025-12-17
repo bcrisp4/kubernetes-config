@@ -4,7 +4,10 @@ tailscale-operator:
 
   installCRDs: true
 
-  # Mount the pre-existing sealed secret
+  # Use pre-existing sealed secret for oauth
+  # Setting clientSecret triggers volume mount, oauthSecretVolume overrides source
+  oauth:
+    clientSecret: "placeholder"
   oauthSecretVolume:
     secret:
       secretName: operator-oauth
