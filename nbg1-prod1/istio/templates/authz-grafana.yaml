@@ -1,5 +1,5 @@
 # Authorization policy for Grafana
-# Allows traffic from Tailscale ingress and n8n
+# Allows traffic from Tailscale ingress, n8n, and grafana-mcp
 apiVersion: security.istio.io/v1
 kind: AuthorizationPolicy
 metadata:
@@ -19,3 +19,7 @@ spec:
     - from:
         - source:
             namespaces: ["n8n"]
+    # Allow traffic from grafana-mcp (MCP server needs API access)
+    - from:
+        - source:
+            namespaces: ["grafana-mcp"]
