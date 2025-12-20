@@ -5,6 +5,10 @@ grafana-mcp:
       name: grafana-mcp-api-key
       key: api-key
 
+  extraArgs:
+    - "-t"
+    - "streamable-http"
+
   resources:
     requests:
       cpu: 50m
