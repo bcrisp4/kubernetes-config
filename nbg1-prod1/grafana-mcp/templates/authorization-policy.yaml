@@ -1,0 +1,13 @@
+---
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: grafana-mcp-allow-grafana-n8n
+spec:
+  action: ALLOW
+  rules:
+    - from:
+        - source:
+            namespaces:
+              - grafana
+              - n8n

@@ -15,3 +15,4 @@ spec:
   conditions:
     - namespaces:
         - "grafana"
+        - "grafana-mcp"

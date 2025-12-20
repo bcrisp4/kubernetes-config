@@ -1,0 +1,13 @@
+grafana-mcp:
+  grafana:
+    url: "http://grafana.grafana.svc.cluster.local:80"
+    apiKeySecret:
+      name: grafana-mcp-api-key
+      key: api-key
+
+  resources:
+    requests:
+      cpu: 50m
+      memory: 64Mi
+    limits:
+      memory: 128Mi
