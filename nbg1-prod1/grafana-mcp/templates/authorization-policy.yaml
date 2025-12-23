@@ -11,3 +11,4 @@ spec:
             namespaces:
               - grafana
               - n8n
+              - tailscale-operator
