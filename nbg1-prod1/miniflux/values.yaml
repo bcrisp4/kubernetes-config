@@ -1,0 +1,56 @@
+# Miniflux RSS Reader configuration
+
+image:
+  repository: miniflux/miniflux
+  tag: "2.2.15"
+  pullPolicy: IfNotPresent
+
+replicaCount: 1
+
+# Miniflux configuration
+# See https://miniflux.app/docs/configuration.html
+config:
+  # Run database migrations on startup
+  runMigrations: true
+  # Create admin user on first run
+  createAdmin: true
+  # Base URL for the application
+  baseUrl: https://miniflux.marlin-tet.ts.net
+  # Polling frequency in minutes
+  pollingFrequency: 60
+  # Number of background workers
+  workerPoolSize: 10
+  # Log level (debug, info, warning, error)
+  logLevel: info
+
+# PostgreSQL configuration (CNPG)
+postgresql:
+  instances: 1
+  storage:
+    size: 5Gi
+  resources:
+    requests:
+      cpu: 100m
+      memory: 256Mi
+    limits:
+      memory: 512Mi
+
+# Miniflux resources
+resources:
+  requests:
+    cpu: 50m
+    memory: 64Mi
+  limits:
+    memory: 256Mi
+
+# Ingress configuration
+ingress:
+  enabled: true
+  className: tailscale
+  host: miniflux
+  tls:
+    secretName: miniflux-tls
+
+# Service configuration
+service:
+  port: 8080

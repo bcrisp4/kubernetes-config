@@ -16,3 +16,4 @@ spec:
     - namespaces:
         - "grafana"
         - "grafana-mcp"
+        - "miniflux"
