@@ -10,8 +10,6 @@ spec:
     initdb:
       database: miniflux
       owner: miniflux
-      secret:
-        name: miniflux-postgres-app
 
   storage:
     size: {{ .Values.postgresql.storage.size }}
