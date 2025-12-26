@@ -1,4 +1,10 @@
 grafana:
+  # Enable Prometheus metrics scraping
+  podAnnotations:
+    prometheus.io/scrape: "true"
+    prometheus.io/port: "3000"
+    prometheus.io/path: "/metrics"
+
   deploymentStrategy:
     type: Recreate
   grafana.ini:
