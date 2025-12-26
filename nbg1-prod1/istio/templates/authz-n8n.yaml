@@ -15,3 +15,7 @@ spec:
     - from:
         - source:
             namespaces: ["tailscale-operator"]
+    # Allow otel-metrics to scrape Prometheus metrics
+    - from:
+        - source:
+            namespaces: ["otel-metrics"]

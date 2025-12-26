@@ -23,3 +23,7 @@ spec:
     - from:
         - source:
             namespaces: ["grafana-mcp"]
+    # Allow otel-metrics to scrape Prometheus metrics
+    - from:
+        - source:
+            namespaces: ["otel-metrics"]
