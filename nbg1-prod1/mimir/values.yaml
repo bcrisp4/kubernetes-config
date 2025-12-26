@@ -29,24 +29,27 @@ mimir-distributed:
       # Block storage (metrics data)
       blocks_storage:
         backend: s3
+        storage_prefix: blocks
         s3:
           bucket_name: bc4-nbg1-prod1-mimir
           endpoint: nbg1.your-objectstorage.com
           access_key_id: ${AWS_ACCESS_KEY_ID}
           secret_access_key: ${AWS_SECRET_ACCESS_KEY}
 
-      # Alertmanager storage
+      # Alertmanager storage - use different prefix to avoid conflict with blocks
       alertmanager_storage:
         backend: s3
+        storage_prefix: alertmanager
         s3:
           bucket_name: bc4-nbg1-prod1-mimir
           endpoint: nbg1.your-objectstorage.com
           access_key_id: ${AWS_ACCESS_KEY_ID}
           secret_access_key: ${AWS_SECRET_ACCESS_KEY}
 
-      # Ruler storage
+      # Ruler storage - use different prefix to avoid conflict with blocks
       ruler_storage:
         backend: s3
+        storage_prefix: ruler
         s3:
           bucket_name: bc4-nbg1-prod1-mimir
           endpoint: nbg1.your-objectstorage.com
