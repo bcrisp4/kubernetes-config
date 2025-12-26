@@ -1,0 +1,39 @@
+# Authorization policy for Mimir gateway
+# Allows Grafana to query metrics and remote write sources to push metrics
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: mimir-gateway
+  namespace: mimir
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/component: gateway
+  action: ALLOW
+  rules:
+    # Allow Grafana to query metrics
+    - from:
+        - source:
+            namespaces: ["grafana"]
+    # Allow internal Mimir components
+    - from:
+        - source:
+            namespaces: ["mimir"]
+---
+# Allow internal Mimir components to communicate with each other
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: mimir-internal
+  namespace: mimir
+spec:
+  action: ALLOW
+  rules:
+    # Allow all traffic from within the mimir namespace
+    - from:
+        - source:
+            namespaces: ["mimir"]
+    # Allow Strimzi operator to manage Kafka
+    - from:
+        - source:
+            namespaces: ["strimzi-kafka-operator"]

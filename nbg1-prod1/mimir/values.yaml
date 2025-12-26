@@ -1,0 +1,258 @@
+mimir-distributed:
+  # Inject S3 credentials from external secret
+  global:
+    extraEnvFrom:
+      - secretRef:
+          name: s3-credentials
+
+  # Configure Mimir with structured config for S3 and Kafka
+  mimir:
+    structuredConfig:
+      # Ingest storage configuration - use external Strimzi Kafka
+      ingest_storage:
+        enabled: true
+        kafka:
+          address: mimir-kafka-kafka-bootstrap.mimir.svc.cluster.local:9092
+          topic: mimir-ingest
+          auto_create_topic_enabled: false
+
+      # Common S3 storage configuration
+      common:
+        storage:
+          backend: s3
+          s3:
+            bucket_name: bc4-nbg1-prod1-mimir
+            endpoint: nbg1.your-objectstorage.com
+            access_key_id: ${AWS_ACCESS_KEY_ID}
+            secret_access_key: ${AWS_SECRET_ACCESS_KEY}
+
+      # Block storage (metrics data)
+      blocks_storage:
+        backend: s3
+        s3:
+          bucket_name: bc4-nbg1-prod1-mimir
+          endpoint: nbg1.your-objectstorage.com
+          access_key_id: ${AWS_ACCESS_KEY_ID}
+          secret_access_key: ${AWS_SECRET_ACCESS_KEY}
+
+      # Alertmanager storage
+      alertmanager_storage:
+        backend: s3
+        s3:
+          bucket_name: bc4-nbg1-prod1-mimir
+          endpoint: nbg1.your-objectstorage.com
+          access_key_id: ${AWS_ACCESS_KEY_ID}
+          secret_access_key: ${AWS_SECRET_ACCESS_KEY}
+
+      # Ruler storage
+      ruler_storage:
+        backend: s3
+        s3:
+          bucket_name: bc4-nbg1-prod1-mimir
+          endpoint: nbg1.your-objectstorage.com
+          access_key_id: ${AWS_ACCESS_KEY_ID}
+          secret_access_key: ${AWS_SECRET_ACCESS_KEY}
+
+  # Disable the built-in Kafka subchart - we use Strimzi
+  kafka:
+    enabled: false
+
+  # Disable MinIO - we use external S3
+  minio:
+    enabled: false
+
+  # Alertmanager - HA with 2 replicas
+  alertmanager:
+    enabled: true
+    replicas: 2
+    persistentVolume:
+      enabled: true
+      size: 1Gi
+    resources:
+      requests:
+        cpu: 50m
+        memory: 128Mi
+      limits:
+        memory: 256Mi
+    statefulSet:
+      enabled: true
+
+  # Compactor
+  compactor:
+    replicas: 1
+    persistentVolume:
+      size: 10Gi
+    resources:
+      requests:
+        cpu: 100m
+        memory: 512Mi
+      limits:
+        memory: 1Gi
+
+  # Distributor - HA with 2 replicas
+  distributor:
+    replicas: 2
+    resources:
+      requests:
+        cpu: 100m
+        memory: 256Mi
+      limits:
+        memory: 512Mi
+
+  # Ingester - HA with 3 replicas for partition distribution
+  ingester:
+    replicas: 3
+    persistentVolume:
+      size: 10Gi
+    resources:
+      requests:
+        cpu: 200m
+        memory: 512Mi
+      limits:
+        memory: 1Gi
+    zoneAwareReplication:
+      enabled: false
+    affinity:
+      podAntiAffinity:
+        preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 100
+            podAffinityTerm:
+              labelSelector:
+                matchExpressions:
+                  - key: app.kubernetes.io/component
+                    operator: In
+                    values:
+                      - ingester
+              topologyKey: kubernetes.io/hostname
+
+  # Querier
+  querier:
+    replicas: 2
+    resources:
+      requests:
+        cpu: 100m
+        memory: 256Mi
+      limits:
+        memory: 512Mi
+
+  # Query Frontend
+  query_frontend:
+    replicas: 2
+    resources:
+      requests:
+        cpu: 100m
+        memory: 128Mi
+      limits:
+        memory: 256Mi
+
+  # Query Scheduler
+  query_scheduler:
+    replicas: 2
+    resources:
+      requests:
+        cpu: 50m
+        memory: 64Mi
+      limits:
+        memory: 128Mi
+
+  # Store Gateway - HA with 3 replicas
+  store_gateway:
+    replicas: 3
+    persistentVolume:
+      size: 5Gi
+    resources:
+      requests:
+        cpu: 100m
+        memory: 256Mi
+      limits:
+        memory: 512Mi
+    zoneAwareReplication:
+      enabled: false
+    affinity:
+      podAntiAffinity:
+        preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 100
+            podAffinityTerm:
+              labelSelector:
+                matchExpressions:
+                  - key: app.kubernetes.io/component
+                    operator: In
+                    values:
+                      - store-gateway
+              topologyKey: kubernetes.io/hostname
+
+  # Ruler
+  ruler:
+    enabled: true
+    replicas: 1
+    resources:
+      requests:
+        cpu: 50m
+        memory: 128Mi
+      limits:
+        memory: 256Mi
+
+  # Overrides exporter
+  overrides_exporter:
+    replicas: 1
+    resources:
+      requests:
+        cpu: 50m
+        memory: 64Mi
+      limits:
+        memory: 128Mi
+
+  # Gateway (nginx)
+  gateway:
+    replicas: 2
+    resources:
+      requests:
+        cpu: 50m
+        memory: 64Mi
+      limits:
+        memory: 128Mi
+
+  # Caches - smaller replicas for small cluster
+  chunks-cache:
+    enabled: true
+    replicas: 2
+    allocatedMemory: 512
+    resources:
+      requests:
+        cpu: 50m
+        memory: 600Mi
+      limits:
+        memory: 600Mi
+
+  index-cache:
+    enabled: true
+    replicas: 2
+    allocatedMemory: 256
+    resources:
+      requests:
+        cpu: 50m
+        memory: 300Mi
+      limits:
+        memory: 300Mi
+
+  metadata-cache:
+    enabled: true
+    replicas: 2
+    allocatedMemory: 128
+    resources:
+      requests:
+        cpu: 50m
+        memory: 150Mi
+      limits:
+        memory: 150Mi
+
+  results-cache:
+    enabled: true
+    replicas: 2
+    allocatedMemory: 128
+    resources:
+      requests:
+        cpu: 50m
+        memory: 150Mi
+      limits:
+        memory: 150Mi
