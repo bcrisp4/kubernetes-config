@@ -29,3 +29,7 @@ spec:
     - from:
         - source:
             namespaces: ["miniflux"]
+    # Allow CNPG operator to communicate with PostgreSQL pods
+    - from:
+        - source:
+            namespaces: ["cloudnative-pg"]
