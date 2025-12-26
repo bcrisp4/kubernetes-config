@@ -37,3 +37,32 @@ spec:
     - from:
         - source:
             namespaces: ["strimzi-kafka-operator"]
+---
+# Allow Kubernetes API server to reach rollout-operator webhook
+# API server is outside the mesh and needs to call admission webhooks
+# PERMISSIVE allows both mTLS and plain TLS connections
+apiVersion: security.istio.io/v1
+kind: PeerAuthentication
+metadata:
+  name: rollout-operator-webhook
+  namespace: mimir
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: rollout-operator
+  mtls:
+    mode: PERMISSIVE
+---
+# Allow all traffic to rollout-operator (needed for kube-apiserver webhooks)
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: rollout-operator
+  namespace: mimir
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: rollout-operator
+  action: ALLOW
+  rules:
+    - {}
