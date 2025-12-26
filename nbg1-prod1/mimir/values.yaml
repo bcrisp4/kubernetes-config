@@ -11,6 +11,10 @@ mimir-distributed:
   # Configure Mimir with structured config for S3 and Kafka
   mimir:
     structuredConfig:
+      # Query frontend logging - log all queries
+      frontend:
+        log_queries_longer_than: -1s
+
       # Ingest storage configuration - use external Strimzi Kafka
       ingest_storage:
         enabled: true
