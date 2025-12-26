@@ -150,10 +150,13 @@ All metrics include these labels:
 | `namespace` | Kubernetes | `mimir` |
 | `pod` | Kubernetes | `mimir-ingester-0` |
 | `node` | Kubernetes | `node-1` |
+| `app` | Pod label | `ingester` |
+| `component` | Pod label | `ingester` |
 | `cluster` | Static | `nbg1-prod1` |
 | `job` | Scrape config | `kubernetes-pods-annotations` |
+| `instance` | Scrape target | `10.244.10.30:8080` |
 
-Additional labels from pod labels are preserved with their original names.
+Only essential labels are preserved to reduce cardinality. High-cardinality labels like `pod_template_hash`, `controller_revision_hash`, and Helm/Istio metadata are excluded.
 
 ## Querying
 

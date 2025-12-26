@@ -82,9 +82,6 @@ opentelemetry-collector:
                   action: replace
                   target_label: __metrics_path__
                   regex: (.+)
-                # Add pod labels
-                - action: labelmap
-                  regex: __meta_kubernetes_pod_label_(.+)
                 # Add namespace label
                 - source_labels: [__meta_kubernetes_namespace]
                   action: replace
@@ -97,6 +94,30 @@ opentelemetry-collector:
                 - source_labels: [__meta_kubernetes_pod_node_name]
                   action: replace
                   target_label: node
+                # Add app label (prefer app, fallback to app.kubernetes.io/name)
+                - source_labels: [__meta_kubernetes_pod_label_app]
+                  action: replace
+                  target_label: app
+                - source_labels: [__meta_kubernetes_pod_label_app_kubernetes_io_name]
+                  action: replace
+                  target_label: app
+                  regex: (.+)
+                # Add component label
+                - source_labels: [__meta_kubernetes_pod_label_app_kubernetes_io_component]
+                  action: replace
+                  target_label: component
+                  regex: (.+)
+                # Set job to namespace/app for uniqueness
+                - source_labels: [__meta_kubernetes_namespace, __meta_kubernetes_pod_label_app]
+                  action: replace
+                  target_label: job
+                  separator: /
+                  regex: (.+/.+)
+                - source_labels: [__meta_kubernetes_namespace, __meta_kubernetes_pod_label_app_kubernetes_io_name]
+                  action: replace
+                  target_label: job
+                  separator: /
+                  regex: (.+/.+)
 
       # Scrape pods with metrics-named ports (fallback discovery)
       prometheus/ports:
@@ -123,9 +144,6 @@ opentelemetry-collector:
                 - source_labels: [__meta_kubernetes_pod_container_port_name]
                   action: keep
                   regex: ".*metrics.*"
-                # Add pod labels
-                - action: labelmap
-                  regex: __meta_kubernetes_pod_label_(.+)
                 # Add namespace label
                 - source_labels: [__meta_kubernetes_namespace]
                   action: replace
@@ -138,6 +156,30 @@ opentelemetry-collector:
                 - source_labels: [__meta_kubernetes_pod_node_name]
                   action: replace
                   target_label: node
+                # Add app label (prefer app, fallback to app.kubernetes.io/name)
+                - source_labels: [__meta_kubernetes_pod_label_app]
+                  action: replace
+                  target_label: app
+                - source_labels: [__meta_kubernetes_pod_label_app_kubernetes_io_name]
+                  action: replace
+                  target_label: app
+                  regex: (.+)
+                # Add component label
+                - source_labels: [__meta_kubernetes_pod_label_app_kubernetes_io_component]
+                  action: replace
+                  target_label: component
+                  regex: (.+)
+                # Set job to namespace/app for uniqueness
+                - source_labels: [__meta_kubernetes_namespace, __meta_kubernetes_pod_label_app]
+                  action: replace
+                  target_label: job
+                  separator: /
+                  regex: (.+/.+)
+                - source_labels: [__meta_kubernetes_namespace, __meta_kubernetes_pod_label_app_kubernetes_io_name]
+                  action: replace
+                  target_label: job
+                  separator: /
+                  regex: (.+/.+)
 
     processors:
       batch:
