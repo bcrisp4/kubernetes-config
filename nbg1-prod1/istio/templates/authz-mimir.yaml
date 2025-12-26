@@ -15,6 +15,10 @@ spec:
     - from:
         - source:
             namespaces: ["grafana"]
+    # Allow otel-metrics to push metrics
+    - from:
+        - source:
+            namespaces: ["otel-metrics"]
     # Allow internal Mimir components
     - from:
         - source:

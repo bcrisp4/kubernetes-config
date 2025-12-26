@@ -1,0 +1,10 @@
+apiVersion: v2
+name: otel-metrics
+description: OpenTelemetry Collector for metrics scraping and forwarding to Mimir
+type: application
+version: 0.1.0
+appVersion: "0.115.0"
+dependencies:
+  - name: opentelemetry-collector
+    version: ~0.115
+    repository: https://open-telemetry.github.io/opentelemetry-helm-charts

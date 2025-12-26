@@ -1,0 +1,191 @@
+opentelemetry-collector:
+  mode: daemonset
+
+  image:
+    repository: otel/opentelemetry-collector-contrib
+
+  # Pod network (in mesh)
+  hostNetwork: false
+
+  # Run on all nodes including control plane
+  tolerations:
+    - key: "node-role.kubernetes.io/control-plane"
+      operator: "Exists"
+      effect: "NoSchedule"
+
+  resources:
+    requests:
+      cpu: 100m
+      memory: 128Mi
+    limits:
+      memory: 512Mi
+
+  # Disable unused ports
+  ports:
+    otlp:
+      enabled: false
+    otlp-http:
+      enabled: false
+    jaeger-compact:
+      enabled: false
+    jaeger-thrift:
+      enabled: false
+    jaeger-grpc:
+      enabled: false
+    zipkin:
+      enabled: false
+    metrics:
+      enabled: true
+      containerPort: 8888
+      servicePort: 8888
+      protocol: TCP
+
+  # RBAC for Kubernetes service discovery
+  clusterRole:
+    create: true
+    rules:
+      - apiGroups: [""]
+        resources: ["pods", "nodes", "endpoints", "services"]
+        verbs: ["get", "list", "watch"]
+      - apiGroups: ["discovery.k8s.io"]
+        resources: ["endpointslices"]
+        verbs: ["get", "list", "watch"]
+
+  # Collector configuration
+  config:
+    receivers:
+      # Scrape pods with prometheus.io/scrape=true annotation
+      prometheus/annotations:
+        config:
+          scrape_configs:
+            - job_name: "kubernetes-pods-annotations"
+              scrape_interval: 30s
+              kubernetes_sd_configs:
+                - role: pod
+              relabel_configs:
+                # Only scrape pods on this node
+                - source_labels: [__meta_kubernetes_pod_node_name]
+                  action: keep
+                  regex: ${env:K8S_NODE_NAME}
+                # Only scrape pods with prometheus.io/scrape=true
+                - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_scrape]
+                  action: keep
+                  regex: "true"
+                # Use custom port if specified
+                - source_labels: [__address__, __meta_kubernetes_pod_annotation_prometheus_io_port]
+                  action: replace
+                  regex: ([^:]+)(?::\d+)?;(\d+)
+                  replacement: $1:$2
+                  target_label: __address__
+                # Use custom path if specified
+                - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_path]
+                  action: replace
+                  target_label: __metrics_path__
+                  regex: (.+)
+                # Add pod labels
+                - action: labelmap
+                  regex: __meta_kubernetes_pod_label_(.+)
+                # Add namespace label
+                - source_labels: [__meta_kubernetes_namespace]
+                  action: replace
+                  target_label: namespace
+                # Add pod name label
+                - source_labels: [__meta_kubernetes_pod_name]
+                  action: replace
+                  target_label: pod
+                # Add node name label
+                - source_labels: [__meta_kubernetes_pod_node_name]
+                  action: replace
+                  target_label: node
+
+      # Scrape pods with metrics-named ports (fallback discovery)
+      prometheus/ports:
+        config:
+          scrape_configs:
+            - job_name: "kubernetes-pods-metrics-ports"
+              scrape_interval: 30s
+              kubernetes_sd_configs:
+                - role: pod
+              relabel_configs:
+                # Only scrape pods on this node
+                - source_labels: [__meta_kubernetes_pod_node_name]
+                  action: keep
+                  regex: ${env:K8S_NODE_NAME}
+                # Skip pods that have prometheus.io/scrape annotation (handled by other receiver)
+                - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_scrape]
+                  action: drop
+                  regex: "true"
+                # Skip pods that explicitly opt out
+                - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_scrape]
+                  action: drop
+                  regex: "false"
+                # Only keep targets with metrics-named ports
+                - source_labels: [__meta_kubernetes_pod_container_port_name]
+                  action: keep
+                  regex: ".*metrics.*"
+                # Add pod labels
+                - action: labelmap
+                  regex: __meta_kubernetes_pod_label_(.+)
+                # Add namespace label
+                - source_labels: [__meta_kubernetes_namespace]
+                  action: replace
+                  target_label: namespace
+                # Add pod name label
+                - source_labels: [__meta_kubernetes_pod_name]
+                  action: replace
+                  target_label: pod
+                # Add node name label
+                - source_labels: [__meta_kubernetes_pod_node_name]
+                  action: replace
+                  target_label: node
+
+    processors:
+      batch:
+        send_batch_size: 10000
+        timeout: 10s
+
+      memory_limiter:
+        check_interval: 1s
+        limit_mib: 400
+
+      # Add resource attributes for better querying in Mimir
+      resource:
+        attributes:
+          - key: cluster
+            value: nbg1-prod1
+            action: insert
+
+    exporters:
+      # Send metrics to Mimir via OTLP
+      otlphttp/mimir:
+        endpoint: "http://mimir-gateway.mimir.svc.cluster.local/otlp"
+        headers:
+          X-Scope-OrgID: "prod"
+
+      # Debug exporter (disabled by default)
+      debug:
+        verbosity: basic
+
+    service:
+      telemetry:
+        logs:
+          level: info
+        metrics:
+          address: 0.0.0.0:8888
+      pipelines:
+        metrics/annotations:
+          receivers: [prometheus/annotations]
+          processors: [memory_limiter, resource, batch]
+          exporters: [otlphttp/mimir]
+
+        metrics/ports:
+          receivers: [prometheus/ports]
+          processors: [memory_limiter, resource, batch]
+          exporters: [otlphttp/mimir]
+
+  # Environment variables for node-local scraping
+  extraEnvs:
+    - name: K8S_NODE_NAME
+      valueFrom:
+        fieldRef:
+          fieldPath: spec.nodeName
