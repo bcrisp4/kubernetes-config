@@ -1,0 +1,80 @@
+# Kafka JMX Prometheus metrics configuration
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: kafka-metrics
+data:
+  kafka-metrics-config.yml: |
+    lowercaseOutputName: true
+    lowercaseOutputLabelNames: true
+    rules:
+      # Kafka broker metrics
+      - pattern: kafka.server<type=(.+), name=(.+), clientId=(.+), topic=(.+), partition=(.*)><>Value
+        name: kafka_server_$1_$2
+        type: GAUGE
+        labels:
+          clientId: "$3"
+          topic: "$4"
+          partition: "$5"
+      - pattern: kafka.server<type=(.+), name=(.+), clientId=(.+), brokerHost=(.+), brokerPort=(.+)><>Value
+        name: kafka_server_$1_$2
+        type: GAUGE
+        labels:
+          clientId: "$3"
+          broker: "$4:$5"
+      - pattern: kafka.server<type=(.+), name=(.+)><>Value
+        name: kafka_server_$1_$2
+        type: GAUGE
+      - pattern: kafka.server<type=(.+), name=(.+)><>Count
+        name: kafka_server_$1_$2_total
+        type: COUNTER
+
+      # Kafka controller metrics
+      - pattern: kafka.controller<type=(.+), name=(.+)><>Value
+        name: kafka_controller_$1_$2
+        type: GAUGE
+      - pattern: kafka.controller<type=(.+), name=(.+)><>Count
+        name: kafka_controller_$1_$2_total
+        type: COUNTER
+
+      # Kafka network metrics
+      - pattern: kafka.network<type=(.+), name=(.+), request=(.+), error=(.+)><>Count
+        name: kafka_network_$1_$2_total
+        type: COUNTER
+        labels:
+          request: "$3"
+          error: "$4"
+      - pattern: kafka.network<type=(.+), name=(.+), request=(.+)><>Count
+        name: kafka_network_$1_$2_total
+        type: COUNTER
+        labels:
+          request: "$3"
+      - pattern: kafka.network<type=(.+), name=(.+)><>Value
+        name: kafka_network_$1_$2
+        type: GAUGE
+
+      # Kafka log metrics
+      - pattern: kafka.log<type=(.+), name=(.+), topic=(.+), partition=(.+)><>Value
+        name: kafka_log_$1_$2
+        type: GAUGE
+        labels:
+          topic: "$3"
+          partition: "$4"
+
+      # JVM metrics
+      - pattern: java.lang<type=Memory><HeapMemoryUsage>(\w+)
+        name: jvm_memory_heap_$1_bytes
+        type: GAUGE
+      - pattern: java.lang<type=Memory><NonHeapMemoryUsage>(\w+)
+        name: jvm_memory_nonheap_$1_bytes
+        type: GAUGE
+      - pattern: java.lang<type=GarbageCollector, name=(.+)><>CollectionCount
+        name: jvm_gc_collection_count_total
+        type: COUNTER
+        labels:
+          gc: "$1"
+      - pattern: java.lang<type=GarbageCollector, name=(.+)><>CollectionTime
+        name: jvm_gc_collection_time_ms_total
+        type: COUNTER
+        labels:
+          gc: "$1"

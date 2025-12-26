@@ -11,6 +11,20 @@ spec:
   kafka:
     version: 4.1.0
     metadataVersion: 4.1-IV0
+    # Enable Prometheus JMX metrics
+    metricsConfig:
+      type: jmxPrometheusExporter
+      valueFrom:
+        configMapKeyRef:
+          name: kafka-metrics
+          key: kafka-metrics-config.yml
+    template:
+      pod:
+        metadata:
+          annotations:
+            prometheus.io/scrape: "true"
+            prometheus.io/port: "9404"
+            prometheus.io/path: "/metrics"
     listeners:
       - name: plain
         port: 9092
