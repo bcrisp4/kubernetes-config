@@ -185,6 +185,48 @@ my-chart:
 | strimzi-kafka-operator | Annotations | `annotations: prometheus.io/*` |
 | Kafka clusters | JMX Exporter | `metricsConfig` in Kafka CR |
 
+#### Adding Extra Labels to Metrics
+
+The otel-metrics collector automatically adds these labels to all metrics:
+
+| Label | Source |
+|-------|--------|
+| `namespace` | Pod namespace |
+| `pod` | Pod name |
+| `node` | Node name |
+| `app` | `app` or `app.kubernetes.io/name` pod label |
+| `component` | `app.kubernetes.io/component` pod label |
+| `job` | `namespace/app` |
+
+**To add custom labels per-app**, use the `prometheus.io/label-<name>` annotation pattern. The collector extracts these annotations and adds them as metric labels:
+
+```yaml
+# Example: Add a "cluster" label to Mimir metrics for Mimir dashboards
+mimir-distributed:
+  global:
+    podAnnotations:
+      prometheus.io/label-cluster: "mimir-nbg1-prod1"
+```
+
+**Supported extra label annotations** (each requires a relabel_config entry in otel-metrics):
+
+| Annotation | Label |
+|------------|-------|
+| `prometheus.io/label-cluster` | `cluster` |
+| `prometheus.io/label-environment` | `environment` |
+| `prometheus.io/label-service` | `service` |
+
+To add support for new labels, edit `nbg1-prod1/otel-metrics/values.yaml` and add a relabel_config to both receivers:
+
+```yaml
+- source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_label_<name>]
+  action: replace
+  target_label: <name>
+  regex: (.+)
+```
+
+Note: Annotation key dashes become underscores in metadata (e.g., `prometheus.io/label-my-label` → `prometheus_io_label_my_label`).
+
 ### 2. Istio AuthorizationPolicy
 
 If the app's namespace is in the Istio ambient mesh, you **must** allow `otel-metrics` to scrape it. Create an AuthorizationPolicy in `nbg1-prod1/istio/templates/`:

@@ -4,6 +4,9 @@ mimir-distributed:
     extraEnvFrom:
       - secretRef:
           name: s3-credentials
+    # Add cluster label for Mimir dashboards
+    podAnnotations:
+      prometheus.io/label-cluster: "mimir-nbg1-prod1"
 
   # Configure Mimir with structured config for S3 and Kafka
   mimir:
