@@ -64,6 +64,18 @@ mimir-distributed:
   minio:
     enabled: false
 
+  # Runtime configuration with per-tenant overrides
+  runtimeConfig:
+    overrides:
+      # Limits for "prod" tenant (X-Scope-OrgID: prod)
+      prod:
+        # Increase label limit for Istio metrics (default: 30, Istio has ~44)
+        max_label_names_per_series: 60
+        # Reasonable ingestion limits for small cluster
+        ingestion_rate: 100000
+        ingestion_burst_size: 200000
+        max_global_series_per_user: 5000000
+
   # Alertmanager - HA with 2 replicas
   alertmanager:
     enabled: true
