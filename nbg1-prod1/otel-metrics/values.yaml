@@ -40,7 +40,7 @@ opentelemetry-collector:
       servicePort: 8888
       protocol: TCP
 
-  # RBAC for Kubernetes service discovery
+  # RBAC for Kubernetes service discovery and kubelet metrics
   clusterRole:
     create: true
     rules:
@@ -50,6 +50,10 @@ opentelemetry-collector:
       - apiGroups: ["discovery.k8s.io"]
         resources: ["endpointslices"]
         verbs: ["get", "list", "watch"]
+      # Required for scraping kubelet/cAdvisor metrics
+      - apiGroups: [""]
+        resources: ["nodes/metrics", "nodes/proxy"]
+        verbs: ["get"]
 
   # Collector configuration
   config:
@@ -217,6 +221,99 @@ opentelemetry-collector:
                   target_label: service
                   regex: (.+)
 
+      # Scrape kubelet cAdvisor metrics for container resource usage
+      prometheus/kubelet:
+        config:
+          scrape_configs:
+            - job_name: "kubelet-cadvisor"
+              scrape_interval: 30s
+              scheme: https
+              kubernetes_sd_configs:
+                - role: node
+              authorization:
+                credentials_file: /var/run/secrets/kubernetes.io/serviceaccount/token
+              tls_config:
+                ca_file: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+                insecure_skip_verify: true
+              relabel_configs:
+                # Only scrape the local node
+                - source_labels: [__meta_kubernetes_node_name]
+                  action: keep
+                  regex: ${env:K8S_NODE_NAME}
+                # Use kubelet HTTPS endpoint
+                - source_labels: [__meta_kubernetes_node_address_InternalIP]
+                  action: replace
+                  target_label: __address__
+                  regex: (.+)
+                  replacement: $1:10250
+                # Scrape cAdvisor metrics endpoint
+                - target_label: __metrics_path__
+                  replacement: /metrics/cadvisor
+                # Add node label
+                - source_labels: [__meta_kubernetes_node_name]
+                  action: replace
+                  target_label: node
+                # Set job label
+                - target_label: job
+                  replacement: kubelet
+
+      # Scrape etcd metrics (Talos runs etcd as system service on control plane nodes)
+      prometheus/etcd:
+        config:
+          scrape_configs:
+            - job_name: "etcd"
+              scrape_interval: 30s
+              scheme: http
+              kubernetes_sd_configs:
+                - role: node
+              relabel_configs:
+                # Only scrape control plane nodes (where etcd runs)
+                - source_labels: [__meta_kubernetes_node_label_node_role_kubernetes_io_control_plane]
+                  action: keep
+                  regex: ""
+                # Only scrape from collectors running on control plane nodes
+                - source_labels: [__meta_kubernetes_node_name]
+                  action: keep
+                  regex: ${env:K8S_NODE_NAME}
+                # Target etcd metrics port on node IP
+                - source_labels: [__meta_kubernetes_node_address_InternalIP]
+                  action: replace
+                  target_label: __address__
+                  regex: (.+)
+                  replacement: $1:2381
+                # Add node label
+                - source_labels: [__meta_kubernetes_node_name]
+                  action: replace
+                  target_label: node
+                # Set job label
+                - target_label: job
+                  replacement: etcd
+
+      # Scrape kube-apiserver metrics
+      prometheus/apiserver:
+        config:
+          scrape_configs:
+            - job_name: "kube-apiserver"
+              scrape_interval: 30s
+              scheme: https
+              kubernetes_sd_configs:
+                - role: endpoints
+                  namespaces:
+                    names: ["default"]
+              authorization:
+                credentials_file: /var/run/secrets/kubernetes.io/serviceaccount/token
+              tls_config:
+                ca_file: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+                insecure_skip_verify: true
+              relabel_configs:
+                # Only scrape the kubernetes apiserver service
+                - source_labels: [__meta_kubernetes_service_name, __meta_kubernetes_endpoint_port_name]
+                  action: keep
+                  regex: kubernetes;https
+                # Set job label
+                - target_label: job
+                  replacement: kube-apiserver
+
     processors:
       batch:
         send_batch_size: 10000
@@ -258,6 +355,21 @@ opentelemetry-collector:
 
         metrics/ports:
           receivers: [prometheus/ports]
+          processors: [memory_limiter, resource, batch]
+          exporters: [otlphttp/mimir]
+
+        metrics/kubelet:
+          receivers: [prometheus/kubelet]
+          processors: [memory_limiter, resource, batch]
+          exporters: [otlphttp/mimir]
+
+        metrics/etcd:
+          receivers: [prometheus/etcd]
+          processors: [memory_limiter, resource, batch]
+          exporters: [otlphttp/mimir]
+
+        metrics/apiserver:
+          receivers: [prometheus/apiserver]
           processors: [memory_limiter, resource, batch]
           exporters: [otlphttp/mimir]
 
