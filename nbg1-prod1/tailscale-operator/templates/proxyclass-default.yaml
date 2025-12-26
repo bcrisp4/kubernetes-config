@@ -1,0 +1,8 @@
+# Default ProxyClass with metrics enabled for all Tailscale proxies
+apiVersion: tailscale.com/v1alpha1
+kind: ProxyClass
+metadata:
+  name: default
+spec:
+  metrics:
+    enable: true

@@ -13,14 +13,22 @@ n8n:
           - n8n
 
   main:
+    # Enable Prometheus metrics
     config:
       n8n:
         host: n8n.marlin-tet.ts.net
         protocol: https
         editor:
           baseUrl: https://n8n.marlin-tet.ts.net
+        metrics: true
       webhook:
         url: https://n8n.marlin-tet.ts.net
+
+    # Enable Prometheus scraping
+    podAnnotations:
+      prometheus.io/scrape: "true"
+      prometheus.io/port: "5678"
+      prometheus.io/path: "/metrics"
 
     persistence:
       enabled: true

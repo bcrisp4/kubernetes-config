@@ -1,6 +1,11 @@
 strimzi-kafka-operator:
   replicas: 1
   watchAnyNamespace: true
+  # Enable Prometheus metrics scraping
+  annotations:
+    prometheus.io/scrape: "true"
+    prometheus.io/port: "8080"
+    prometheus.io/path: "/metrics"
   resources:
     requests:
       cpu: 100m

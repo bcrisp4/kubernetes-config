@@ -62,7 +62,15 @@ opentelemetry-collector:
               scrape_interval: 30s
               kubernetes_sd_configs:
                 - role: pod
+              tls_config:
+                insecure_skip_verify: true
               relabel_configs:
+                # Set scheme (http/https) based on annotation
+                - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_scheme]
+                  action: replace
+                  target_label: __scheme__
+                  regex: (https?)
+                  replacement: $1
                 # Only scrape pods on this node
                 - source_labels: [__meta_kubernetes_pod_node_name]
                   action: keep

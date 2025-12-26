@@ -1,0 +1,4 @@
+hcloud-csi:
+  # Enable Prometheus metrics
+  metrics:
+    enabled: true

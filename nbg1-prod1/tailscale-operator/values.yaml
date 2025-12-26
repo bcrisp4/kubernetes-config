@@ -24,3 +24,5 @@ tailscale-operator:
 
   proxyConfig:
     defaultTags: "tag:k8s-nbg1-prod1"
+    # Use ProxyClass with metrics enabled
+    defaultProxyClass: "default"

@@ -50,7 +50,16 @@ opentelemetry-collector:
     zipkin:
       enabled: false
     metrics:
-      enabled: false
+      enabled: true
+      containerPort: 8888
+      servicePort: 8888
+      protocol: TCP
+
+  # Enable Prometheus metrics scraping
+  podAnnotations:
+    prometheus.io/scrape: "true"
+    prometheus.io/port: "8888"
+    prometheus.io/path: "/metrics"
 
   # Collector configuration
   config:
