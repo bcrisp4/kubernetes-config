@@ -11,6 +11,9 @@ grafana:
     server:
       domain: grafana.marlin-tet.ts.net
       root_url: "%(protocol)s://%(domain)s"
+    feature_toggles:
+      provisioning: true
+      kubernetesDashboards: true
   admin:
     existingSecret: grafana-admin
     userKey: username
