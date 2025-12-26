@@ -17,3 +17,4 @@ spec:
         - "grafana"
         - "grafana-mcp"
         - "miniflux"
+        - "loki"
