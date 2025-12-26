@@ -54,6 +54,9 @@ opentelemetry-collector:
       - apiGroups: [""]
         resources: ["nodes/metrics", "nodes/proxy"]
         verbs: ["get"]
+      # Required for scraping apiserver /metrics endpoint
+      - nonResourceURLs: ["/metrics"]
+        verbs: ["get"]
 
   # Collector configuration
   config:
@@ -268,9 +271,10 @@ opentelemetry-collector:
                 - role: node
               relabel_configs:
                 # Only scrape control plane nodes (where etcd runs)
-                - source_labels: [__meta_kubernetes_node_label_node_role_kubernetes_io_control_plane]
+                # Use labelpresent to check if the label exists (true for control plane, empty for workers)
+                - source_labels: [__meta_kubernetes_node_labelpresent_node_role_kubernetes_io_control_plane]
                   action: keep
-                  regex: ""
+                  regex: "true"
                 # Only scrape from collectors running on control plane nodes
                 - source_labels: [__meta_kubernetes_node_name]
                   action: keep
