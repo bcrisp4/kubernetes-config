@@ -1,6 +1,8 @@
 kube-state-metrics:
-  # Enable Prometheus metrics scraping via pod annotations (default: true)
-  prometheusScrape: true
+  # Enable Prometheus metrics scraping via pod annotations
+  podAnnotations:
+    prometheus.io/scrape: "true"
+    prometheus.io/port: "8080"
 
   resources:
     requests:
