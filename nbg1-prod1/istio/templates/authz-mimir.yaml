@@ -41,6 +41,10 @@ spec:
     - from:
         - source:
             namespaces: ["strimzi-kafka-operator"]
+    # Allow otel-metrics to scrape Prometheus metrics
+    - from:
+        - source:
+            namespaces: ["otel-metrics"]
 ---
 # Allow Kubernetes API server to reach rollout-operator webhook
 # API server is outside the mesh and needs to call admission webhooks
