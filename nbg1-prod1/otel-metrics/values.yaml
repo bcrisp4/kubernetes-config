@@ -105,6 +105,10 @@ opentelemetry-collector:
                 - source_labels: [__meta_kubernetes_pod_name]
                   action: replace
                   target_label: pod
+                # Add container name label
+                - source_labels: [__meta_kubernetes_pod_container_name]
+                  action: replace
+                  target_label: container
                 # Add node name label
                 - source_labels: [__meta_kubernetes_pod_node_name]
                   action: replace
@@ -181,6 +185,10 @@ opentelemetry-collector:
                 - source_labels: [__meta_kubernetes_pod_name]
                   action: replace
                   target_label: pod
+                # Add container name label
+                - source_labels: [__meta_kubernetes_pod_container_name]
+                  action: replace
+                  target_label: container
                 # Add node name label
                 - source_labels: [__meta_kubernetes_pod_node_name]
                   action: replace
