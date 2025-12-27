@@ -120,9 +120,9 @@ mimir-distributed:
     resources:
       requests:
         cpu: 100m
-        memory: 256Mi
-      limits:
         memory: 512Mi
+      limits:
+        memory: 1Gi
 
   # Ingester - HA with 3 replicas for partition distribution
   ingester:
