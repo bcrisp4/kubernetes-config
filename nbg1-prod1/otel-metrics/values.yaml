@@ -278,6 +278,40 @@ opentelemetry-collector:
                 - target_label: job
                   replacement: kubelet
 
+            # Scrape kubelet metrics (includes volume stats)
+            - job_name: "kubelet"
+              scrape_interval: 30s
+              scheme: https
+              kubernetes_sd_configs:
+                - role: node
+              authorization:
+                credentials_file: /var/run/secrets/kubernetes.io/serviceaccount/token
+              tls_config:
+                ca_file: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+                insecure_skip_verify: true
+              relabel_configs:
+                # Only scrape the local node
+                - source_labels: [__meta_kubernetes_node_name]
+                  action: keep
+                  regex: ${env:K8S_NODE_NAME}
+                # Use kubelet HTTPS endpoint
+                - source_labels: [__meta_kubernetes_node_address_InternalIP]
+                  action: replace
+                  target_label: __address__
+                  regex: (.+)
+                  replacement: $1:10250
+                # Add node label
+                - source_labels: [__meta_kubernetes_node_name]
+                  action: replace
+                  target_label: node
+                # Set instance to node name for dashboard compatibility
+                - source_labels: [__meta_kubernetes_node_name]
+                  action: replace
+                  target_label: instance
+                # Set job label
+                - target_label: job
+                  replacement: kubelet
+
       # Scrape etcd metrics (Talos runs etcd as system service on control plane nodes)
       prometheus/etcd:
         config:
