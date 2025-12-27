@@ -90,7 +90,7 @@ When Kafka recovered, all 27 OTEL collector pods (across otel-metrics, otel-rece
 
 ## Follow-up Actions
 
-### P1 - Prevent Thundering Herd (This Week)
+### P1 - Prevent Thundering Herd
 
 - [ ] **Add jitter to OTEL collector retry intervals**
 
@@ -134,9 +134,19 @@ When Kafka recovered, all 27 OTEL collector pods (across otel-metrics, otel-rece
       limit_mps: 15000
   ```
 
-### P2 - Improve Observability (This Sprint)
+### P2 - Improve Observability
 
-- [ ] **Add Kafka disk usage alerts**
+- [ ] **Deploy backup Prometheus for meta-monitoring**
+
+  When Mimir is down, alerts don't fire because alerting depends on Mimir. Deploy a lightweight standalone Prometheus instance with:
+  - Short retention (24-48h) to minimize resource usage
+  - Scrape only critical targets: Mimir components, Kafka, key Kubernetes components
+  - Alertmanager integration for critical infrastructure alerts
+  - Does NOT send data to Mimir (independent monitoring path)
+
+  This ensures we get alerted about Mimir/Kafka issues even when Mimir itself is broken.
+
+- [ ] **Add Kafka disk usage alerts** (to backup Prometheus)
 
   Create alerting rule for Kafka PVC usage > 70%:
 
@@ -150,15 +160,11 @@ When Kafka recovered, all 27 OTEL collector pods (across otel-metrics, otel-rece
       severity: warning
   ```
 
-- [ ] **Enable kubelet volume stats collection**
-
-  Ensure Prometheus/OTEL is scraping kubelet for volume metrics
-
 - [ ] **Add distributor memory usage alerts**
 
   Alert when distributors approach memory limits
 
-### P3 - Architecture Improvements (Future)
+### P3 - Architecture Improvements
 
 - [ ] **Evaluate Kafka auto-scaling**
 
