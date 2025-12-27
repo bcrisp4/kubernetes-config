@@ -82,6 +82,9 @@ mimir-distributed:
         ingestion_rate: 100000
         ingestion_burst_size: 200000
         max_global_series_per_user: 5000000
+        # Ruler limits for Mimir mixin rules
+        ruler_max_rules_per_rule_group: 100
+        ruler_max_rule_groups_per_tenant: 100
 
   # Alertmanager - HA with 2 replicas
   alertmanager:
