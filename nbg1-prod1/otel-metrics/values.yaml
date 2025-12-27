@@ -151,6 +151,12 @@ opentelemetry-collector:
                   action: replace
                   target_label: service
                   regex: (.+)
+                # Set instance to node name for node-exporter (for cAdvisor join compatibility)
+                - source_labels: [__meta_kubernetes_pod_label_app_kubernetes_io_name, __meta_kubernetes_pod_node_name]
+                  action: replace
+                  regex: prometheus-node-exporter;(.+)
+                  replacement: $1
+                  target_label: instance
 
       # Scrape pods with metrics-named ports (fallback discovery)
       prometheus/ports:
@@ -264,6 +270,10 @@ opentelemetry-collector:
                 - source_labels: [__meta_kubernetes_node_name]
                   action: replace
                   target_label: node
+                # Set instance to node name for dashboard compatibility
+                - source_labels: [__meta_kubernetes_node_name]
+                  action: replace
+                  target_label: instance
                 # Set job label
                 - target_label: job
                   replacement: kubelet
@@ -297,6 +307,10 @@ opentelemetry-collector:
                 - source_labels: [__meta_kubernetes_node_name]
                   action: replace
                   target_label: node
+                # Set instance to node name for consistency
+                - source_labels: [__meta_kubernetes_node_name]
+                  action: replace
+                  target_label: instance
                 # Set job label
                 - target_label: job
                   replacement: etcd
