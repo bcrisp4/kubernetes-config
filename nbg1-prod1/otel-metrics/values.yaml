@@ -121,6 +121,12 @@ opentelemetry-collector:
                   action: replace
                   target_label: app
                   regex: (.+)
+                # Override app for Tailscale proxies (default app label is UUID)
+                - source_labels: [__meta_kubernetes_pod_label_tailscale_com_parent_resource]
+                  action: replace
+                  target_label: app
+                  regex: (.+)
+                  replacement: ts-$1
                 # Add component label
                 - source_labels: [__meta_kubernetes_pod_label_app_kubernetes_io_component]
                   action: replace
@@ -137,6 +143,12 @@ opentelemetry-collector:
                   target_label: job
                   separator: /
                   regex: (.+/.+)
+                # Override job for Tailscale proxies (default app label is UUID)
+                - source_labels: [__meta_kubernetes_namespace, __meta_kubernetes_pod_label_tailscale_com_parent_resource]
+                  action: replace
+                  target_label: job
+                  separator: /ts-
+                  regex: (.+)
                 # Extra labels from annotations (prometheus.io/label-<name>)
                 # Add new entries here to support additional labels
                 - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_label_cluster]
@@ -207,6 +219,12 @@ opentelemetry-collector:
                   action: replace
                   target_label: app
                   regex: (.+)
+                # Override app for Tailscale proxies (default app label is UUID)
+                - source_labels: [__meta_kubernetes_pod_label_tailscale_com_parent_resource]
+                  action: replace
+                  target_label: app
+                  regex: (.+)
+                  replacement: ts-$1
                 # Add component label
                 - source_labels: [__meta_kubernetes_pod_label_app_kubernetes_io_component]
                   action: replace
@@ -223,6 +241,12 @@ opentelemetry-collector:
                   target_label: job
                   separator: /
                   regex: (.+/.+)
+                # Override job for Tailscale proxies (default app label is UUID)
+                - source_labels: [__meta_kubernetes_namespace, __meta_kubernetes_pod_label_tailscale_com_parent_resource]
+                  action: replace
+                  target_label: job
+                  separator: /ts-
+                  regex: (.+)
                 # Extra labels from annotations (prometheus.io/label-<name>)
                 # Add new entries here to support additional labels
                 - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_label_cluster]
