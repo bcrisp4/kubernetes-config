@@ -37,8 +37,12 @@ spec:
       default.replication.factor: 3
       min.insync.replicas: 2
       # Retention for ingest storage - keep data long enough for ingesters to consume
-      log.retention.hours: 24
+      # Reduced from 24h to 6h since ingesters flush to S3 much faster
+      log.retention.hours: 6
       log.retention.bytes: -1
+      # Segment settings for faster cleanup
+      log.segment.bytes: 134217728
+      log.cleanup.policy: delete
   entityOperator:
     topicOperator:
       resources:
@@ -72,7 +76,7 @@ spec:
     volumes:
       - id: 0
         type: persistent-claim
-        size: 10Gi
+        size: 50Gi
         deleteClaim: false
         kraftMetadata: shared
   resources:
@@ -93,5 +97,5 @@ spec:
   partitions: 12
   replicas: 3
   config:
-    retention.ms: 86400000  # 24 hours
+    retention.ms: 21600000  # 6 hours (matches broker log.retention.hours)
     min.insync.replicas: 2
