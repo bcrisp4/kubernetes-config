@@ -118,13 +118,13 @@ loki:
         memory: 300Mi
   chunksCache:
     replicas: 1
-    allocatedMemory: 2000
+    allocatedMemory: 3000
     resources:
       requests:
         cpu: 100m
-        memory: 2500Mi
+        memory: 3500Mi
       limits:
-        memory: 2500Mi
+        memory: 3500Mi
   gateway:
     replicas: 2
     resources:
