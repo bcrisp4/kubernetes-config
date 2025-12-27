@@ -396,6 +396,19 @@ opentelemetry-collector:
         endpoint: "http://mimir-gateway.mimir.svc.cluster.local/otlp"
         headers:
           X-Scope-OrgID: "prod"
+        # Retry configuration with jitter to prevent thundering herd
+        # See: docs/post-mortems/2025-12-27-mimir-kafka-outage.md
+        retry_on_failure:
+          enabled: true
+          initial_interval: 5s
+          max_interval: 300s
+          max_elapsed_time: 600s  # Drop data after 10 min of retries
+          randomization_factor: 0.5  # Add 50% jitter to prevent synchronized retries
+        # Sending queue for buffering during transient failures
+        sending_queue:
+          enabled: true
+          num_consumers: 10
+          queue_size: 5000
 
       # Debug exporter (disabled by default)
       debug:

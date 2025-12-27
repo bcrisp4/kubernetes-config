@@ -254,6 +254,31 @@ Labels are controlled via:
 - Resource attributes (become Loki labels automatically)
 - `loki.attribute.labels` hint for promoting log attributes to labels
 
+## Resilience Configuration
+
+Both collectors are configured with retry and queue settings to handle downstream outages gracefully:
+
+```yaml
+retry_on_failure:
+  enabled: true
+  initial_interval: 5s      # Initial backoff
+  max_interval: 300s        # Max 5 min between retries
+  max_elapsed_time: 600s    # Drop data after 10 min of retries
+  randomization_factor: 0.5 # ±50% jitter to prevent thundering herd
+
+sending_queue:
+  enabled: true
+  num_consumers: 10         # Parallel export workers
+  queue_size: 5000          # Buffer capacity
+```
+
+**Key behaviors**:
+- **Jitter**: Randomizes retry timing to prevent all collectors from retrying simultaneously after an outage
+- **Bounded retry**: Drops data after 10 minutes to prevent memory exhaustion
+- **Queue buffer**: Absorbs transient failures without blocking the pipeline
+
+See [post-mortem: 2025-12-27 Mimir Kafka Outage](post-mortems/2025-12-27-mimir-kafka-outage.md) for background on why these settings were added.
+
 ## Monitoring
 
 Both collectors expose Prometheus metrics on port 8888 with annotations for scraping by otel-metrics:

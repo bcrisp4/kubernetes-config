@@ -92,9 +92,9 @@ When Kafka recovered, all 27 OTEL collector pods (across otel-metrics, otel-rece
 
 ### P1 - Prevent Thundering Herd
 
-- [ ] **Add jitter to OTEL collector retry intervals**
+- [x] **Add jitter to OTEL collector retry intervals**
 
-  Configure the OTEL exporters with randomized initial delays to prevent synchronized retries:
+  Configured all OTEL exporters (otel-metrics, otel-receiver, otel-shipper) with randomized retry delays:
 
   ```yaml
   exporters:
@@ -103,22 +103,12 @@ When Kafka recovered, all 27 OTEL collector pods (across otel-metrics, otel-rece
         enabled: true
         initial_interval: 5s
         max_interval: 300s
-        max_elapsed_time: 3600s
+        max_elapsed_time: 600s  # Drop data after 10 min of retries
         randomization_factor: 0.5  # Add 50% jitter
-  ```
-
-- [ ] **Implement sending queue with bounded retry**
-
-  ```yaml
-  exporters:
-    otlphttp/mimir:
       sending_queue:
         enabled: true
         num_consumers: 10
         queue_size: 5000
-      retry_on_failure:
-        enabled: true
-        max_elapsed_time: 600s  # Drop data after 10 min of retries
   ```
 
 - [ ] **Consider rate limiting at OTEL collector level**

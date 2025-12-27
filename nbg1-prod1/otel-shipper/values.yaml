@@ -111,6 +111,17 @@ opentelemetry-collector:
         endpoint: "http://loki-gateway.loki.svc.cluster.local/otlp"
         headers:
           X-Scope-OrgID: "prod"
+        # Retry configuration with jitter to prevent thundering herd
+        retry_on_failure:
+          enabled: true
+          initial_interval: 5s
+          max_interval: 300s
+          max_elapsed_time: 600s
+          randomization_factor: 0.5
+        sending_queue:
+          enabled: true
+          num_consumers: 10
+          queue_size: 5000
 
     service:
       telemetry:
