@@ -41,7 +41,7 @@ The Strimzi Kafka cluster was provisioned with 10Gi PVCs and 24-hour log retenti
 
 ### Secondary Cause: Thundering Herd
 
-When Kafka recovered, all 27 OTEL collector pods (across otel-metrics, otel-receiver, otel-shipper namespaces) simultaneously attempted to flush their buffered metrics:
+When Kafka recovered, all 9 otel-metrics collector pods simultaneously attempted to flush their buffered metrics:
 
 1. OTEL collectors use exponential backoff with retry queues
 2. During outage, collectors accumulated backlogged data
@@ -111,18 +111,14 @@ When Kafka recovered, all 27 OTEL collector pods (across otel-metrics, otel-rece
         queue_size: 5000
   ```
 
-- [ ] **Consider rate limiting at OTEL collector level**
+- [x] **Evaluated rate limiting at OTEL collector level** - Not implemented
 
-  Add a rate limiter processor to prevent any single collector from overwhelming Mimir:
+  Researched OTEL Collector rate limiting options. **No rate limit processor exists** for metrics.
+  There's an open [feature request (Issue #35204)](https://github.com/open-telemetry/opentelemetry-collector-contrib/issues/35204)
+  from September 2024, but no implementation yet. The `memory_limiter` processor provides backpressure
+  but not per-source rate limiting.
 
-  ```yaml
-  processors:
-    rate_limiter:
-      check_interval: 1s
-      # Limit each collector to a fraction of total capacity
-      # With 27 collectors and 500k limit: ~15k per collector
-      limit_mps: 15000
-  ```
+  **Decision:** Rely on Mimir-side rate limits (500k/s) + retry jitter instead.
 
 ### P2 - Improve Observability
 
@@ -164,9 +160,40 @@ When Kafka recovered, all 27 OTEL collector pods (across otel-metrics, otel-rece
 
   Determine if 500k/s should be the new baseline or revert to 100k/s after backlog clears
 
-- [ ] **Consider circuit breaker pattern**
+- [x] **Evaluated circuit breaker pattern** - Not implemented
 
-  Evaluate implementing a circuit breaker (e.g., via Istio) between OTEL and Mimir to prevent cascading failures
+  Researched Istio ambient mode circuit breaking options:
+
+  - **Circuit breaking is supported** via `DestinationRule` with `connectionPool` settings (maxConnections,
+    http1MaxPendingRequests) + waypoint proxy for L7 policies
+  - **Rate limiting is problematic** - EnvoyFilter has "very very limited support" in ambient mode
+    ([GitHub Issue #54391](https://github.com/istio/istio/issues/54391))
+  - Circuit breaking would limit concurrent requests to distributors, preventing OOM from too many
+    in-flight requests
+
+  **Decision:** Skip for now. With only 9 otel-metrics collectors and retry jitter now configured,
+  the thundering herd risk is significantly reduced. Circuit breaking would be "belt-and-suspenders"
+  and adds operational complexity (waypoint proxy deployment). Revisit if we scale collectors or
+  experience similar issues.
+
+- [x] **Review Mimir capacity against Grafana recommendations**
+
+  Compared current resource allocation against [Grafana capacity planning guide](https://grafana.com/docs/mimir/latest/manage/run-production-environment/planning-capacity/).
+
+  **Current usage:**
+  - Active series: ~329k
+  - In-memory series (with 3x replication): ~986k
+  - Ingestion rate: ~37k samples/sec
+
+  **Finding:** Ingesters were under-provisioned. Using 800-880Mi of 1Gi limit (85-88% utilization).
+  Grafana recommends 2.5GB per 300k in-memory series, suggesting ~8GB needed for 986k series.
+
+  **Note:** With ingest storage (Kafka) enabled, ingesters are read-path only and were not affected
+  by the thundering herd on the write path. However, increased memory for headroom.
+
+  **Changes:**
+  - Ingester memory request: 512Mi → 1Gi
+  - Ingester memory limit: 1Gi → 3Gi
 
 - [ ] **OTEL collector horizontal pod autoscaler**
 
