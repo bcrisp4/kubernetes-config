@@ -156,9 +156,27 @@ When Kafka recovered, all 9 otel-metrics collector pods simultaneously attempted
 
   Consider Strimzi Kafka auto-scaling for storage based on usage
 
-- [ ] **Review ingestion rate limits**
+- [x] **Review ingestion rate limits**
 
-  Determine if 500k/s should be the new baseline or revert to 100k/s after backlog clears
+  Analyzed whether 500k/s rate limit and 5M series limit match cluster capacity.
+
+  **Distributor capacity (for ingestion rate):**
+  - Current usage at 37k/s: ~350Mi memory per pod, ~0.17 CPU per pod
+  - At 500k/s (13.5x): would need ~9.3GB memory, but only have 2Gi allocated
+  - Distributors would OOM around 100-120k/s
+
+  **Ingester capacity (for series limit):**
+  - Current: ~180k series per ingester using ~840Mi
+  - At 5M series (1.67M per ingester): would need ~7.8Gi per ingester
+  - Current limit: 3Gi per ingester
+  - Max capacity: ~640k series per ingester = ~1.9M total
+
+  **Decision:** Reverted to limits that match actual cluster capacity:
+  - `ingestion_rate`: 500k/s → 100k/s
+  - `ingestion_burst_size`: 1M → 200k
+  - `max_global_series_per_user`: 5M → 1.5M
+
+  Rate limits should reflect what the cluster can handle, not aspirational numbers.
 
 - [x] **Evaluated circuit breaker pattern** - Not implemented
 

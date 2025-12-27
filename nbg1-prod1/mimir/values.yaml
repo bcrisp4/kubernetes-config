@@ -78,10 +78,11 @@ mimir-distributed:
       prod:
         # Increase label limit for Istio metrics (default: 30, Istio has ~44)
         max_label_names_per_series: 60
-        # Increased ingestion limits to handle recovery backlog
-        ingestion_rate: 500000
-        ingestion_burst_size: 1000000
-        max_global_series_per_user: 5000000
+        # Ingestion limits sized for current cluster capacity
+        # See post-mortem: 2025-12-27-mimir-kafka-outage.md for analysis
+        ingestion_rate: 100000
+        ingestion_burst_size: 200000
+        max_global_series_per_user: 1500000
         # Ruler limits for Mimir mixin rules
         ruler_max_rules_per_rule_group: 100
         ruler_max_rule_groups_per_tenant: 100
