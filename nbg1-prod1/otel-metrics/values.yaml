@@ -148,7 +148,7 @@ opentelemetry-collector:
                   action: replace
                   target_label: job
                   separator: /ts-
-                  regex: (.+)
+                  regex: (.+/ts-.+)
                 # Extra labels from annotations (prometheus.io/label-<name>)
                 # Add new entries here to support additional labels
                 - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_label_cluster]
@@ -246,7 +246,7 @@ opentelemetry-collector:
                   action: replace
                   target_label: job
                   separator: /ts-
-                  regex: (.+)
+                  regex: (.+/ts-.+)
                 # Extra labels from annotations (prometheus.io/label-<name>)
                 # Add new entries here to support additional labels
                 - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_label_cluster]
