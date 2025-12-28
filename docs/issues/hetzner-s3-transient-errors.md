@@ -28,6 +28,22 @@ level=warn msg="failed to download block" err="unexpected EOF"
 
 Occurs during large block downloads, suggesting connection resets or timeouts.
 
+### 3. "GatewayTimeout"
+
+```
+An error occurred (GatewayTimeout) when calling the UploadPartCopy operation (reached max retries: 2): The server did not respond in time.
+```
+
+Occurs during multipart upload operations, particularly for larger objects.
+
+### 4. "404 Not Found" on HeadObject
+
+```
+An error occurred (404) when calling the HeadObject operation: Not Found
+```
+
+Object exists but HeadObject returns 404 transiently.
+
 ## Timeline
 
 | Time | Event |
@@ -52,12 +68,36 @@ s3:
     max_idle_connections_per_host: 100
 ```
 
+## Reproduction with AWS CLI
+
+The issue is reproducible with standard AWS CLI tools, not just Mimir. During a bucket-to-bucket copy operation using `aws s3 sync`, transient errors occurred on random objects while other objects in the same batch succeeded:
+
+```bash
+# Command used
+aws s3 sync s3://bc4-nbg1-prod1-mimir/blocks/prod/ s3://bc4-mimir-nbg1-prod1/blocks/prod/ \
+  --endpoint-url https://nbg1.your-objectstorage.com
+
+# Example errors during sync (interleaved with successful copies)
+copy failed: s3://bc4-nbg1-prod1-mimir/blocks/prod/01KDF25JK9VQY7ZY4HN9GYD08H/meta.json to s3://bc4-mimir-nbg1-prod1/blocks/prod/01KDF25JK9VQY7ZY4HN9GYD08H/meta.json An error occurred (NoSuchBucket) when calling the CopyObject operation: The specified bucket does not exist.
+
+copy failed: s3://bc4-nbg1-prod1-mimir/blocks/prod/01KDFV1M5KC3N4749P3BJ3CVVA/chunks/000001 to s3://bc4-mimir-nbg1-prod1/blocks/prod/01KDFV1M5KC3N4749P3BJ3CVVA/chunks/000001 An error occurred (GatewayTimeout) when calling the UploadPartCopy operation (reached max retries: 2): The server did not respond in time.
+
+copy failed: s3://bc4-nbg1-prod1-mimir/blocks/prod/01KDF5DX49N0EJX98HN7SDM13N/chunks/000001 to s3://bc4-mimir-nbg1-prod1/blocks/prod/01KDF5DX49N0EJX98HN7SDM13N/chunks/000001 An error occurred (404) when calling the HeadObject operation: Not Found
+```
+
+**Key observations from CLI testing:**
+- Same request succeeds on retry (running `aws s3 sync` again copies the failed files)
+- Errors occur mid-batch - some objects succeed, others fail, in same operation
+- Multiple error types: `NoSuchBucket`, `GatewayTimeout`, `404 Not Found`
+- Large multipart uploads more likely to fail (`UploadPartCopy` operations)
+
 ## Observations
 
 1. **Loki works fine** - Same S3 endpoint and credentials work reliably for Loki chunks storage
 2. **Transient nature** - Errors resolve without intervention, operations succeed on retry
 3. **No pattern identified** - Errors don't correlate with time of day or load
 4. **Bucket name doesn't matter** - Errors occurred with both old (`bc4-nbg1-prod1-mimir`) and new (`bc4-mimir-nbg1-prod1`) bucket names
+5. **Reproducible with AWS CLI** - Not specific to Mimir's S3 client implementation
 
 ## Differences: Mimir vs Loki S3 Usage
 
