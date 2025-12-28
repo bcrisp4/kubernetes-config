@@ -87,9 +87,9 @@ spec:
   resources:
     requests:
       cpu: 200m
-      memory: 512Mi
-    limits:
       memory: 1Gi
+    limits:
+      memory: 2Gi
 ---
 # Kafka topic for Mimir ingest storage
 apiVersion: kafka.strimzi.io/v1beta2
