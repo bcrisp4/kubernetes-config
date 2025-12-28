@@ -197,7 +197,10 @@ The transient S3 errors appear to be specific to the NBG1 region's object storag
 
 ## Hetzner Support Request
 
-The following can be sent to Hetzner support if needed:
+**Submitted:** 2025-12-28
+**Ticket ID:** 2025122803017259
+
+The following was sent to Hetzner support:
 
 ---
 

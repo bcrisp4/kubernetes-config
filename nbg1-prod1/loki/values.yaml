@@ -28,11 +28,11 @@ loki:
     storage:
       type: s3
       bucketNames:
-        chunks: bc4-loki-nbg1-prod1
-        ruler: bc4-loki-nbg1-prod1
-        admin: bc4-loki-nbg1-prod1
+        chunks: bc4-loki-nbg1-prod1-fsn1
+        ruler: bc4-loki-nbg1-prod1-fsn1
+        admin: bc4-loki-nbg1-prod1-fsn1
       s3:
-        endpoint: nbg1.your-objectstorage.com
+        endpoint: fsn1.your-objectstorage.com
         accessKeyId: ${AWS_ACCESS_KEY_ID}
         secretAccessKey: ${AWS_SECRET_ACCESS_KEY}
 
