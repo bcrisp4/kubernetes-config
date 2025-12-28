@@ -60,6 +60,8 @@ Object exists but HeadObject returns 404 transiently.
 | 2025-12-28 | Created new bucket in FSN1 region |
 | 2025-12-28 | FSN1 stability test: 0% failure rate (0/30 operations) |
 | 2025-12-28 | Migrated Mimir to FSN1 bucket, old NBG1 bucket retained as backup |
+| 2025-12-28 | Discovered corrupted block `01KDER92BNRQXWS0WA34HKQ0BE` (missing chunks file) |
+| 2025-12-28 | Deleted corrupted block from S3, queries restored |
 
 ## Configuration Applied
 
@@ -242,6 +244,58 @@ All traffic originates from Hetzner Cloud VMs (internal). FSN1 Object Storage wo
 3. Can you check server-side logs for bucket `bc4-mimir-nbg1-prod1` around 2025-12-27?
 
 ---
+
+## Post-Migration Data Corruption
+
+**Date:** 2025-12-28
+**Discovered:** During query investigation (queries >24h failing)
+
+### Issue
+
+After migration, Mimir queries spanning >24 hours were failing with:
+
+```
+loading chunks: block 01KDER92BNRQXWS0WA34HKQ0BE: get range reader:
+failed to get object attributes: prod/01KDER92BNRQXWS0WA34HKQ0BE/chunks/000001:
+The specified key does not exist.
+```
+
+### Root Cause
+
+Block `01KDER92BNRQXWS0WA34HKQ0BE` was created by the compactor on **2025-12-27 01:55 UTC** during the NBG1 transient error period. The compactor:
+
+1. Successfully uploaded `meta.json` (1KB) and `index` (58MB)
+2. **Failed to upload `chunks/000001` (316MB)** due to NBG1 S3 errors
+3. Marked parent blocks for deletion (normal compaction behavior)
+4. Parent blocks were cleaned up, leaving an orphaned corrupt block
+
+The block was already corrupted in NBG1 before migration - the copy to FSN1 faithfully replicated the incomplete block.
+
+### Block Details
+
+| Field | Value |
+|-------|-------|
+| ULID | `01KDER92BNRQXWS0WA34HKQ0BE` |
+| Created | 2025-12-27 01:55:25 UTC |
+| Time Range | ~4 hours of metrics |
+| Source | Compactor (level 3) |
+| Expected chunks | `chunks/000001` (316MB) |
+| Actual chunks | Missing |
+
+### Resolution
+
+Deleted the corrupted block from S3:
+
+```bash
+aws s3 rm s3://bc4-mimir-nbg1-prod1-fsn1/blocks/prod/01KDER92BNRQXWS0WA34HKQ0BE/ \
+  --endpoint-url https://fsn1.your-objectstorage.com --recursive
+```
+
+**Data loss:** ~4 hours of metrics from 2025-12-27 01:44-05:40 UTC. Parent blocks were already cleaned up, so this data is unrecoverable.
+
+### Prevention
+
+The FSN1 migration prevents future occurrences. No additional configuration needed.
 
 ## Related
 
