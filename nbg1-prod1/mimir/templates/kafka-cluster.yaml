@@ -43,6 +43,11 @@ spec:
       # Segment settings for faster cleanup
       log.segment.bytes: 134217728
       log.cleanup.policy: delete
+      # Message size limits for Mimir ingest storage
+      # Mimir's producer_max_record_size_bytes defaults to ~15.24 MB
+      # Must be >= Mimir's limit to avoid MESSAGE_TOO_LARGE errors
+      message.max.bytes: 16777216
+      replica.fetch.max.bytes: 16777216
   entityOperator:
     topicOperator:
       resources:
@@ -99,3 +104,4 @@ spec:
   config:
     retention.ms: 21600000  # 6 hours (matches broker log.retention.hours)
     min.insync.replicas: 2
+    max.message.bytes: 16777216  # 16 MB (matches broker message.max.bytes)
