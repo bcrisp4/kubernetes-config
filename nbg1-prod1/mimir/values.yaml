@@ -32,6 +32,12 @@ mimir-distributed:
             endpoint: nbg1.your-objectstorage.com
             access_key_id: ${AWS_ACCESS_KEY_ID}
             secret_access_key: ${AWS_SECRET_ACCESS_KEY}
+            # HTTP configuration for slow S3 responses
+            http:
+              idle_conn_timeout: 2m
+              response_header_timeout: 5m
+              max_idle_connections: 100
+              max_idle_connections_per_host: 100
 
       # Block storage (metrics data)
       blocks_storage:
@@ -42,6 +48,11 @@ mimir-distributed:
           endpoint: nbg1.your-objectstorage.com
           access_key_id: ${AWS_ACCESS_KEY_ID}
           secret_access_key: ${AWS_SECRET_ACCESS_KEY}
+          http:
+            idle_conn_timeout: 2m
+            response_header_timeout: 5m
+            max_idle_connections: 100
+            max_idle_connections_per_host: 100
 
       # Alertmanager storage - use different prefix to avoid conflict with blocks
       alertmanager_storage:
@@ -52,6 +63,11 @@ mimir-distributed:
           endpoint: nbg1.your-objectstorage.com
           access_key_id: ${AWS_ACCESS_KEY_ID}
           secret_access_key: ${AWS_SECRET_ACCESS_KEY}
+          http:
+            idle_conn_timeout: 2m
+            response_header_timeout: 5m
+            max_idle_connections: 100
+            max_idle_connections_per_host: 100
 
       # Ruler storage - use different prefix to avoid conflict with blocks
       ruler_storage:
@@ -62,6 +78,11 @@ mimir-distributed:
           endpoint: nbg1.your-objectstorage.com
           access_key_id: ${AWS_ACCESS_KEY_ID}
           secret_access_key: ${AWS_SECRET_ACCESS_KEY}
+          http:
+            idle_conn_timeout: 2m
+            response_header_timeout: 5m
+            max_idle_connections: 100
+            max_idle_connections_per_host: 100
 
   # Disable the built-in Kafka subchart - we use Strimzi
   kafka:
