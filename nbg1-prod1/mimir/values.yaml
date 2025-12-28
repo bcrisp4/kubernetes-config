@@ -32,13 +32,6 @@ mimir-distributed:
             endpoint: nbg1.your-objectstorage.com
             access_key_id: ${AWS_ACCESS_KEY_ID}
             secret_access_key: ${AWS_SECRET_ACCESS_KEY}
-            # HTTP client settings for S3 - add retries for intermittent failures
-            http_config:
-              idle_conn_timeout: 1m30s
-              response_header_timeout: 2m
-              max_idle_conns: 100
-              max_idle_conns_per_host: 100
-            max_retries: 3
 
       # Block storage (metrics data)
       blocks_storage:
@@ -49,12 +42,6 @@ mimir-distributed:
           endpoint: nbg1.your-objectstorage.com
           access_key_id: ${AWS_ACCESS_KEY_ID}
           secret_access_key: ${AWS_SECRET_ACCESS_KEY}
-          http_config:
-            idle_conn_timeout: 1m30s
-            response_header_timeout: 2m
-            max_idle_conns: 100
-            max_idle_conns_per_host: 100
-          max_retries: 3
 
       # Alertmanager storage - use different prefix to avoid conflict with blocks
       alertmanager_storage:
