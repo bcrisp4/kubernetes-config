@@ -28,8 +28,8 @@ mimir-distributed:
         storage:
           backend: s3
           s3:
-            bucket_name: bc4-mimir-nbg1-prod1
-            endpoint: nbg1.your-objectstorage.com
+            bucket_name: bc4-mimir-nbg1-prod1-fsn1
+            endpoint: fsn1.your-objectstorage.com
             access_key_id: ${AWS_ACCESS_KEY_ID}
             secret_access_key: ${AWS_SECRET_ACCESS_KEY}
             # HTTP configuration for slow S3 responses
@@ -44,8 +44,8 @@ mimir-distributed:
         backend: s3
         storage_prefix: blocks
         s3:
-          bucket_name: bc4-mimir-nbg1-prod1
-          endpoint: nbg1.your-objectstorage.com
+          bucket_name: bc4-mimir-nbg1-prod1-fsn1
+          endpoint: fsn1.your-objectstorage.com
           access_key_id: ${AWS_ACCESS_KEY_ID}
           secret_access_key: ${AWS_SECRET_ACCESS_KEY}
           http:
@@ -59,8 +59,8 @@ mimir-distributed:
         backend: s3
         storage_prefix: alertmanager
         s3:
-          bucket_name: bc4-mimir-nbg1-prod1
-          endpoint: nbg1.your-objectstorage.com
+          bucket_name: bc4-mimir-nbg1-prod1-fsn1
+          endpoint: fsn1.your-objectstorage.com
           access_key_id: ${AWS_ACCESS_KEY_ID}
           secret_access_key: ${AWS_SECRET_ACCESS_KEY}
           http:
@@ -74,8 +74,8 @@ mimir-distributed:
         backend: s3
         storage_prefix: ruler
         s3:
-          bucket_name: bc4-mimir-nbg1-prod1
-          endpoint: nbg1.your-objectstorage.com
+          bucket_name: bc4-mimir-nbg1-prod1-fsn1
+          endpoint: fsn1.your-objectstorage.com
           access_key_id: ${AWS_ACCESS_KEY_ID}
           secret_access_key: ${AWS_SECRET_ACCESS_KEY}
           http:
