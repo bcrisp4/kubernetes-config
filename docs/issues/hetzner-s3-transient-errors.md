@@ -1,8 +1,9 @@
 # Hetzner Object Storage - Transient S3 Errors
 
-**Status:** Resolved - Migrated to FSN1 region
+**Status:** Resolved - Migrated to FSN1 region (confirmed correct by Hetzner support)
 **Date:** 2025-12-27
 **Resolution Date:** 2025-12-28
+**Hetzner Confirmation:** 2025-12-30 - NBG1 has ongoing saturation issues, FSN/HEL recommended
 **Affected Service:** Mimir (compactor, ruler)
 **Original Endpoint:** `nbg1.your-objectstorage.com`
 **Original Bucket:** `bc4-mimir-nbg1-prod1`
@@ -201,6 +202,21 @@ The transient S3 errors appear to be specific to the NBG1 region's object storag
 
 **Submitted:** 2025-12-28
 **Ticket ID:** 2025122803017259
+**Response received:** 2025-12-30
+
+### Hetzner Response
+
+> We have identified and corrected an issue within the NBG location.
+> The error NoSuchBucket and other related HTTP404 issues should no longer happen.
+>
+> Regardless, this region suffers daily saturation because of general user load.
+> We do not have a solution in the short term. If possible, we would suggest using either FSN or HEL.
+
+**Summary:** Hetzner confirmed the transient errors were due to an infrastructure issue they have now fixed. However, they also disclosed that NBG1 Object Storage has ongoing capacity/saturation problems with no short-term fix. They recommend FSN or HEL regions instead.
+
+**Our status:** Already migrated to FSN1 - no action needed. This confirms our migration was the right decision.
+
+---
 
 The following was sent to Hetzner support:
 
