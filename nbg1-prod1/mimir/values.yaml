@@ -138,7 +138,7 @@ mimir-distributed:
 
   # Distributor - scale out to reduce per-pod GC pressure
   distributor:
-    replicas: 3
+    replicas: 5
     resources:
       requests:
         cpu: 100m
