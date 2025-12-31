@@ -128,7 +128,7 @@ mimir-distributed:
   compactor:
     replicas: 1
     persistentVolume:
-      size: 10Gi
+      size: 50Gi
     resources:
       requests:
         cpu: 100m
