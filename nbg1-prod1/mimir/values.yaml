@@ -139,6 +139,11 @@ mimir-distributed:
   # Distributor - HA with 2 replicas
   distributor:
     replicas: 2
+    # Set GOMEMLIMIT to 80% of memory limit to reduce GC CPU usage
+    # See: MimirDistributorGCUsesTooMuchCPU alert
+    env:
+      - name: GOMEMLIMIT
+        value: "858993459"  # 0.8 * 1Gi
     resources:
       requests:
         cpu: 100m
