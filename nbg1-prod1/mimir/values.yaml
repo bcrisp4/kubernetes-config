@@ -141,7 +141,7 @@ mimir-distributed:
     replicas: 5
     resources:
       requests:
-        cpu: 100m
+        cpu: 200m
         memory: 512Mi
       limits:
         memory: 1Gi
