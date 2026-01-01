@@ -209,10 +209,10 @@ mimir-distributed:
       size: 5Gi
     resources:
       requests:
-        cpu: 100m
-        memory: 256Mi
+        cpu: 250m
+        memory: 1024Mi
       limits:
-        memory: 512Mi
+        memory: 1024Mi
     zoneAwareReplication:
       enabled: false
     affinity:
