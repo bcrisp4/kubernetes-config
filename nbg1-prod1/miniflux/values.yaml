@@ -45,7 +45,7 @@ resources:
 
 # Ingress configuration
 ingress:
-  enabled: true
+  enabled: false
   className: tailscale
   host: miniflux
   tls:
