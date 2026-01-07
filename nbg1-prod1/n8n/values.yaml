@@ -1,6 +1,6 @@
 n8n:
   ingress:
-    enabled: true
+    enabled: false
     className: tailscale
     hosts:
       - host: n8n
