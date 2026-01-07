@@ -24,7 +24,7 @@ grafana:
   initChownData:
     enabled: false
   ingress:
-    enabled: true
+    enabled: false
     ingressClassName: tailscale
     hosts:
       - grafana
