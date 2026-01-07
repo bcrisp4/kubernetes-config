@@ -1,9 +1,0 @@
-dependencies:
-- name: cert-manager
-  repository: https://charts.jetstack.io
-  version: v1.19.2
-- name: cert-manager-csi-driver
-  repository: https://charts.jetstack.io
-  version: v0.12.0
-digest: sha256:52e1956f88e8fa952a92c341f6f6b5f54e6be8bb4399b27c8a44efc01a3af219
-generated: "2025-12-17T22:34:35.899892Z"

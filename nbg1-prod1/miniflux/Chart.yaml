@@ -1,6 +1,0 @@
-apiVersion: v2
-name: miniflux
-description: A Helm chart for Miniflux RSS reader
-type: application
-version: 0.1.0
-appVersion: "2.2.15"
